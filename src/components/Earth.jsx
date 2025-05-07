@@ -1,53 +1,50 @@
-import { Suspense, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { OrbitControls, Sphere } from "@react-three/drei";
 import EarthTexture from "../assets/earthTexture.png";
 import * as THREE from "three";
 import { Center } from "@react-three/drei";
-import { useLoader } from "@react-three/fiber";
+import { useLoader, useThree } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import Dots from "./Dots";
-
-// Sample country coordinates (this can be dynamically fetched from an API)
-const availableCountries = [
-  { name: "USA", lat: 37.0902, lng: -95.7129 },
-  { name: "India", lat: 20.5937, lng: 78.9629 },
-  { name: "Australia", lat: -25.2744, lng: 133.7751 },
-  { name: "Brazil", lat: -14.235, lng: -51.9253 },
-  { name: "Canada", lat: 45.4215, lng: -75.6971 },
-  // Add more countries with lat/lng
-];
+import { getCountryNameFromLatLng } from "../services/services";
 
 const Earth = () => {
-  const [coordinates, setCoordinates] = useState({ lat: "", lng: "" });
-  const [countryData, setCountryData] = useState(null);
   const texture = useLoader(TextureLoader, EarthTexture);
   const earthRef = useRef();
+  const { camera, gl } = useThree();
+  const [isDragging, setIsDragging] = useState(false);
 
-  const getCountryData = async (lat, lng) => {
-    try {
-      if (!coordinates) return;
+  const getLatLngfromEarth = (vector) => {
+    const lat = 90 - (Math.acos(vector.y) * 180) / Math.PI;
+    const lng = -(
+      (((Math.atan2(vector.z, vector.x) * 180) / Math.PI + 180) % 360) -
+      180
+    );
+    return {
+      lat: Math.round(lat * 100) / 100,
+      lng: Math.round(lng * 100) / 100,
+    };
+  };
 
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-      );
-      const data = await response.json();
-      setCountryData(data);
-    } catch (err) {
-      console.error(err);
+  const handleEarthClick = (event) => {
+    const mouse = new THREE.Vector2();
+    const rect = gl.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    const raycaster = new THREE.Raycaster();
+    raycaster.params.Mesh = { threshold: 0.05 };
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObject(earthRef.current, true);
+
+    if (intersects.length > 0) {
+      const point = intersects[0].point;
+      const normalized = point.clone().normalize();
+      const { lat, lng } = getLatLngfromEarth(normalized);
+      getCountryNameFromLatLng(lat, lng);
     }
   };
 
-  const handleDotClick = (lat, lng) => {
-    setCoordinates({ lat, lng });
-    getCountryData(lat, lng);
-  };
-
-  useEffect(() => {
-    console.log(countryData);
-  }, [countryData]);
-
   return (
-    <Suspense fallback={"Loading..."}>
+    <>
       <color args={["#0f0f16"]} attach={"background"} />
       <OrbitControls
         makeDefault
@@ -58,15 +55,24 @@ const Earth = () => {
       <ambientLight intensity={2.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} />
 
-      <Center>
-        <Sphere args={[1, 32, 32]} ref={earthRef}>
-          <meshStandardMaterial map={texture} />
-        </Sphere>
-      </Center>
-      {availableCountries.map((country, index) => (
-        <Dots country={country} key={index} earthRef={earthRef} onClick={handleDotClick} />
-      ))}
-    </Suspense>
+      <Sphere
+        args={[1, 32, 32]}
+        ref={earthRef}
+        onPointerDown={() => setIsDragging(false)}
+        onPointerMove={() => setIsDragging(true)}
+        onPointerUp={(event) => {
+          if (!isDragging) {
+            handleEarthClick(event);
+          }
+        }}
+      >
+        <meshStandardMaterial
+          map={texture}
+          depthTest={true}
+          depthWrite={true}
+        />
+      </Sphere>
+    </>
   );
 };
 
