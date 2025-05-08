@@ -1,17 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OrbitControls, Sphere } from "@react-three/drei";
 import EarthTexture from "../assets/earthTexture.png";
 import * as THREE from "three";
-import { Center } from "@react-three/drei";
 import { useLoader, useThree } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { getCountryNameFromLatLng } from "../services/services";
+import { getCountryCodeFromEarth } from "../services/services";
 
 const Earth = () => {
   const texture = useLoader(TextureLoader, EarthTexture);
   const earthRef = useRef();
+
   const { camera, gl } = useThree();
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedCountryCode, setSelectedCountryCode] = useState("");
 
   const getLatLngfromEarth = (vector) => {
     const lat = 90 - (Math.acos(vector.y) * 180) / Math.PI;
@@ -25,7 +26,7 @@ const Earth = () => {
     };
   };
 
-  const handleEarthClick = (event) => {
+  const handleEarthClick = async (event) => {
     const mouse = new THREE.Vector2();
     const rect = gl.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -36,12 +37,24 @@ const Earth = () => {
     const intersects = raycaster.intersectObject(earthRef.current, true);
 
     if (intersects.length > 0) {
-      const point = intersects[0].point;
-      const normalized = point.clone().normalize();
-      const { lat, lng } = getLatLngfromEarth(normalized);
-      getCountryNameFromLatLng(lat, lng);
+      const point = intersects[0].point.clone().normalize();
+      const { lat, lng } = getLatLngfromEarth(point);
+      try {
+        const countryCode = await getCountryCodeFromEarth(lat, lng);
+        if (countryCode) {
+          setSelectedCountryCode(countryCode);
+        } else {
+          console.log("Error setting country code");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
+
+  useEffect(() => {
+    console.log(selectedCountryCode);
+  }, [selectedCountryCode]);
 
   return (
     <>
