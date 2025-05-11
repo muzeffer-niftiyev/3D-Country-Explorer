@@ -5,12 +5,14 @@ import * as THREE from "three";
 import { useLoader, useThree } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import { getCountryCodeFromEarth } from "../services/services";
+import gsap from "gsap";
 
 const Earth = () => {
   const texture = useLoader(TextureLoader, EarthTexture);
   const earthRef = useRef();
-
+  const controlsRef = useRef();
   const { camera, gl } = useThree();
+
   const [isDragging, setIsDragging] = useState(false);
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
 
@@ -31,14 +33,32 @@ const Earth = () => {
     const rect = gl.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
     const raycaster = new THREE.Raycaster();
-    raycaster.params.Mesh = { threshold: 0.05 };
     raycaster.setFromCamera(mouse, camera);
+
     const intersects = raycaster.intersectObject(earthRef.current, true);
 
     if (intersects.length > 0) {
-      const point = intersects[0].point.clone().normalize();
-      const { lat, lng } = getLatLngfromEarth(point);
+      const point = intersects[0].point.clone().normalize().multiplyScalar(2.5);
+
+      gsap.to(camera.position, {
+        x: point.x,
+        y: point.y,
+        z: point.z,
+        duration: 1.5,
+        ease: "power2.out",
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+          controlsRef.current.update();
+          const distance = camera.position.distanceTo(
+            earthRef.current.position
+          );
+          controlsRef.current.maxDistance = distance * 2;
+        },
+      });
+
+      const { lat, lng } = getLatLngfromEarth(point.clone().normalize());
       try {
         const countryCode = await getCountryCodeFromEarth(lat, lng);
         if (countryCode) {
@@ -53,21 +73,26 @@ const Earth = () => {
   };
 
   useEffect(() => {
-    console.log(selectedCountryCode);
+    if (selectedCountryCode) {
+      console.log("Selected:", selectedCountryCode);
+    }
   }, [selectedCountryCode]);
 
   return (
     <>
-      <color args={["#0f0f16"]} attach={"background"} />
+      <color attach="background" args={["#0f0f16"]} />
       <OrbitControls
+        ref={controlsRef}
+        enablePan={false}
         makeDefault
         rotateSpeed={0.4}
         maxDistance={Math.PI * 1.5}
         minDistance={Math.PI / 1.5}
+        enableDamping
+        dampingFactor={0.1}
       />
       <ambientLight intensity={2.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} />
-
       <Sphere
         args={[1, 32, 32]}
         ref={earthRef}
