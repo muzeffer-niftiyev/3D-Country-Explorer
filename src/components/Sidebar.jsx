@@ -1,22 +1,39 @@
 import { Select } from "antd";
-import { getAllCountryNames } from "../services/services";
+import {
+  getAllCountryNames,
+  getCountryDataFromCode,
+} from "../services/services";
 import { useEffect, useState } from "react";
+import DataCard from "./DataCard";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "./Loader";
+import { setSelectedCountryData } from "../store/countrySlice";
 
 const Sidebar = () => {
   const [allCountries, setAllCountries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch();
+  const isDataLoading = useSelector((state) => state.country.isLoading);
+  const selectedCountry = useSelector(
+    (state) => state.country.selectedCountryData
+  );
 
   const onChange = (value) => {
-    console.log(`selected ${value}`);
+    const getCountryData = async () => {
+      const data = await getCountryDataFromCode(value);
+      console.log(data);
+      dispatch(setSelectedCountryData(data));
+    };
+    getCountryData();
   };
 
   useEffect(() => {
     const fetchCountries = async () => {
       const countries = await getAllCountryNames();
       if (countries && countries.length) {
-        const formatted = countries.map((name) => ({
-          label: name,
-          value: name,
+        const formatted = countries.map((country) => ({
+          label: country.name,
+          value: country.code,
         }));
         setAllCountries(formatted);
       }
@@ -25,6 +42,10 @@ const Sidebar = () => {
 
     fetchCountries();
   }, []);
+
+  useEffect(() => {
+    console.log(selectedCountry);
+  }, [selectedCountry]);
 
   return (
     <div className="bg-white h-full p-6 flex items-center flex-col">
@@ -35,16 +56,18 @@ const Sidebar = () => {
       </h1>
 
       <Select
-        className="w-[80%]"
+        className="w-[70%]"
         showSearch
         loading={isLoading}
         placeholder="Select a country"
         onChange={onChange}
         options={allCountries}
+        value={selectedCountry?.name || null}
         filterOption={(input, option) =>
           (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
         }
       />
+      {isDataLoading ? <Loader /> : <DataCard />}
     </div>
   );
 };

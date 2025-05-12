@@ -3,14 +3,15 @@ import Earth from "./components/Earth";
 import Sidebar from "./components/Sidebar";
 import { Suspense } from "react";
 import Loader from "./components/Loader";
+import { Html } from "@react-three/drei";
 
 const App = () => {
   return (
     <div className="flex">
-      <div className="w-[30dvw] h-[100dvh] py-8 pl-8">
+      <div className="w-[35dvw] h-[100dvh] py-8 pl-8">
         <Sidebar />
       </div>
-      <div className="w-[70dvw] h-[100dvh]">
+      <div className="w-[65dvw] h-[100dvh]">
         <Canvas
           flat
           camera={{
@@ -22,7 +23,13 @@ const App = () => {
           gl={{ preserveDrawingBuffer: true }}
         >
           <color args={["#0f0f16"]} attach={"background"} />
-          <Suspense fallback={<Loader />}>
+          <Suspense
+            fallback={
+              <Html>
+                <Loader />
+              </Html>
+            }
+          >
             <Earth />
           </Suspense>
         </Canvas>
@@ -35,5 +42,5 @@ export default App;
 
 // TODO
 
-// GECE GUNDUZ CEVIRMEK ELAVE ELEMEK
-// TEXTURE SEKLI DEYISECEK
+// 1) STORE ELAVE ELE REDUX UCUN , SELECTED COUNTRY ORDA OLACAQ.
+// 2) GECE GUNDUZ CEVIRMEK ELAVE ELEMEK TEXTURE SEKLI DEYISECEK

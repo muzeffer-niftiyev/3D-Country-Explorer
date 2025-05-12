@@ -1,20 +1,25 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { OrbitControls, Sphere } from "@react-three/drei";
 import EarthTexture from "../assets/earthTexture.png";
 import * as THREE from "three";
 import { useLoader, useThree } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { getCountryCodeFromEarth } from "../services/services";
+import {
+  getCountryCodeFromEarth,
+  getCountryDataFromCode,
+} from "../services/services";
 import gsap from "gsap";
+import { useDispatch } from "react-redux";
+import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
 
 const Earth = () => {
   const texture = useLoader(TextureLoader, EarthTexture);
   const earthRef = useRef();
   const controlsRef = useRef();
   const { camera, gl } = useThree();
+  const dispatch = useDispatch();
 
   const [isDragging, setIsDragging] = useState(false);
-  const [selectedCountryCode, setSelectedCountryCode] = useState("");
 
   const getLatLngfromEarth = (vector) => {
     const lat = 90 - (Math.acos(vector.y) * 180) / Math.PI;
@@ -60,23 +65,22 @@ const Earth = () => {
 
       const { lat, lng } = getLatLngfromEarth(point.clone().normalize());
       try {
+        dispatch(setIsLoading(true));
         const countryCode = await getCountryCodeFromEarth(lat, lng);
         if (countryCode) {
-          setSelectedCountryCode(countryCode);
+          console.log(countryCode);
+          const countryData = await getCountryDataFromCode(countryCode);
+          dispatch(setSelectedCountryData(countryData));
         } else {
           console.log("Error setting country code");
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        dispatch(setIsLoading(false));
       }
     }
   };
-
-  useEffect(() => {
-    if (selectedCountryCode) {
-      console.log("Selected:", selectedCountryCode);
-    }
-  }, [selectedCountryCode]);
 
   return (
     <>

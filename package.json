@@ -12,11 +12,13 @@
   "dependencies": {
     "@react-three/drei": "^10.0.7",
     "@react-three/fiber": "^9.1.2",
+    "@reduxjs/toolkit": "^2.8.1",
     "@tailwindcss/vite": "^4.1.5",
     "antd": "^5.25.1",
     "gsap": "^3.13.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-redux": "^9.2.0",
     "react-use": "^17.6.0",
     "tailwindcss": "^4.1.5",
     "three": "^0.176.0"
