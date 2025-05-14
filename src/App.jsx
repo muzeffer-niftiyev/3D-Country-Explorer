@@ -4,6 +4,8 @@ import Sidebar from "./components/Sidebar";
 import { Suspense } from "react";
 import Loader from "./components/Loader";
 import { Html } from "@react-three/drei";
+import ThemeToggle from "./components/ThemeToggle";
+import PreloadTextures from "./components/PreloadTextures";
 
 const App = () => {
   return (
@@ -11,7 +13,8 @@ const App = () => {
       <div className="w-[35dvw] h-[100dvh] py-8 pl-8">
         <Sidebar />
       </div>
-      <div className="w-[65dvw] h-[100dvh]">
+      <div className="w-[65dvw] h-[100dvh] relative">
+        <ThemeToggle />
         <Canvas
           flat
           camera={{
@@ -30,6 +33,7 @@ const App = () => {
               </Html>
             }
           >
+            <PreloadTextures />
             <Earth />
           </Suspense>
         </Canvas>
@@ -42,5 +46,4 @@ export default App;
 
 // TODO
 
-// 1) STORE ELAVE ELE REDUX UCUN , SELECTED COUNTRY ORDA OLACAQ.
-// 2) GECE GUNDUZ CEVIRMEK ELAVE ELEMEK TEXTURE SEKLI DEYISECEK
+// 1) Select-den olke secildikde loader gorunmur. Loading olmasini yoxlayib loader gostermek lazmdi

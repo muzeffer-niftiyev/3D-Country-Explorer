@@ -17,7 +17,6 @@ export const getCountryDataFromCode = async (code) => {
     );
     const data = await response.json();
     const obj = data[0];
-    console.log(obj);
     const formatted = {
       name: obj.name.official,
       capital: obj.capital[0],

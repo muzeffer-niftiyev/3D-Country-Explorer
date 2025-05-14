@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { OrbitControls, Sphere } from "@react-three/drei";
-import EarthTexture from "../assets/earthTexture.png";
 import * as THREE from "three";
 import { useLoader, useThree } from "@react-three/fiber";
 import { TextureLoader } from "three";
@@ -9,11 +8,20 @@ import {
   getCountryDataFromCode,
 } from "../services/services";
 import gsap from "gsap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
 
 const Earth = () => {
-  const texture = useLoader(TextureLoader, EarthTexture);
+  const theme = useSelector((state) => state.theme.theme);
+  const [lightTexture, darkTexture] = useLoader(TextureLoader, [
+    "/lightTexture.jpg",
+    "/darkTexture.jpg",
+  ]);
+
+  const texture = useMemo(() => {
+    return theme === "dark" ? darkTexture : lightTexture;
+  }, [theme, lightTexture, darkTexture]);
+
   const earthRef = useRef();
   const controlsRef = useRef();
   const { camera, gl } = useThree();
@@ -51,7 +59,7 @@ const Earth = () => {
         x: point.x,
         y: point.y,
         z: point.z,
-        duration: 1.5,
+        duration: 2,
         ease: "power2.out",
         onUpdate: () => {
           camera.lookAt(0, 0, 0);
@@ -68,7 +76,6 @@ const Earth = () => {
         dispatch(setIsLoading(true));
         const countryCode = await getCountryCodeFromEarth(lat, lng);
         if (countryCode) {
-          console.log(countryCode);
           const countryData = await getCountryDataFromCode(countryCode);
           dispatch(setSelectedCountryData(countryData));
         } else {
@@ -112,6 +119,7 @@ const Earth = () => {
           map={texture}
           depthTest={true}
           depthWrite={true}
+          opacity={1}
         />
       </Sphere>
     </>

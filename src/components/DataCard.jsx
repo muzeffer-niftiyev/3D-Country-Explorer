@@ -31,7 +31,7 @@ const DataCard = () => {
   if (!countryData || Object.keys(countryData).length === 0) return null;
 
   return (
-    <div className="bg-[#fff8f0] my-10 w-full flex items-center flex-col py-5 px-3">
+    <div className="bg-[#fcfcfc] my-10 w-full flex items-center flex-col py-5 px-3">
       <img
         src={countryData.flagUrl}
         alt="flag"
@@ -41,44 +41,42 @@ const DataCard = () => {
         {countryData.name}
       </h3>
 
-      <div className="grid grid-cols-2 gap-x-8 gap-y-6 mt-5">
-        <div className="flex gap-2 items-center">
-          <p className="font-bold text-lg">Capital: </p>
-          <p className="font-semibold text-md">{countryData.capital}</p>
+      <div className="grid grid-cols-[1fr_1fr] gap-x-8 gap-y-6 mt-5 w-full">
+        <div className="flex gap-2 items-center w-full">
+          <p className="font-semibold text-md">Capital: </p>
+          <p className="font-bold text-lg">{countryData.capital}</p>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <p className="font-bold text-lg">Continent: </p>
-          <p className="font-semibold text-md">
+        <div className="flex gap-2 items-center w-full">
+          <p className="font-semibold text-md">Continent: </p>
+          <p className="font-bold text-lg">
             {countryData.continents.join(", ")}
           </p>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <p className="font-bold text-lg">Population: </p>
-          <p className="font-semibold text-md">
+        <div className="flex gap-2 items-center w-full">
+          <p className="font-semibold text-md">Population: </p>
+          <p className="font-bold text-lg">
             {formatPopulation(countryData.population)}
           </p>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <p className="font-bold text-lg">Area: </p>
-          <p className="font-semibold text-md">
-            {formatArea(countryData.area)}
-          </p>
+        <div className="flex gap-2 items-center w-full">
+          <p className="font-semibold text-md">Area: </p>
+          <p className="font-bold text-lg">{formatArea(countryData.area)}</p>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <p className="font-bold text-lg">Language: </p>
-          <p className="font-semibold text-md">
+        <div className="flex gap-2 items-center w-full">
+          <p className="font-semibold text-md">Language: </p>
+          <p className="font-bold text-lg">
             {Object.values(countryData.languages).join(", ")}
           </p>
         </div>
 
-        <div className="flex gap-2 items-center">
-          <p className="font-bold text-lg">Currency: </p>
+        <div className="flex gap-2 items-center w-full">
+          <p className="font-semibold text-md">Currency: </p>
           {formatCurrency(countryData.currencies).map((currency) => (
-            <p key={currency.name} className="font-semibold text-md">
+            <p key={currency.name} className="font-bold text-lg">
               {currency.code} ({currency.symbol})
             </p>
           ))}

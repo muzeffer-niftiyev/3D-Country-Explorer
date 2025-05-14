@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 import DataCard from "./DataCard";
 import { useDispatch, useSelector } from "react-redux";
 import Loader from "./Loader";
-import { setSelectedCountryData } from "../store/countrySlice";
+import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
 
 const Sidebar = () => {
   const [allCountries, setAllCountries] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
   const dispatch = useDispatch();
   const isDataLoading = useSelector((state) => state.country.isLoading);
   const selectedCountry = useSelector(
@@ -20,9 +20,19 @@ const Sidebar = () => {
 
   const onChange = (value) => {
     const getCountryData = async () => {
-      const data = await getCountryDataFromCode(value);
-      console.log(data);
-      dispatch(setSelectedCountryData(data));
+      try {
+        dispatch(setIsLoading(true));
+        const data = await getCountryDataFromCode(value);
+        if (data) {
+          dispatch(setSelectedCountryData(data));
+        } else {
+          console.log("Error setting country code");
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        dispatch(setIsLoading(false));
+      }
     };
     getCountryData();
   };
@@ -37,19 +47,15 @@ const Sidebar = () => {
         }));
         setAllCountries(formatted);
       }
-      setIsLoading(false);
+      setIsCountriesLoading(false);
     };
 
     fetchCountries();
   }, []);
 
-  useEffect(() => {
-    console.log(selectedCountry);
-  }, [selectedCountry]);
-
   return (
-    <div className="bg-white h-full p-6 flex items-center flex-col">
-      <h1 className="font-medium text-xl mb-8">
+    <div className="bg-white dark:bg-[#0f0f18] h-full p-6 flex items-center flex-col transition-all duration-800">
+      <h1 className="font-medium text-xl mb-8 text-[#222] dark:text-[#eee]">
         Welcome to the <span className="font-bold">Countries Explorer</span>!
         Choose a country to explore by clicking on the 3D Earth or selecting
         from the dropdown list.
@@ -58,7 +64,7 @@ const Sidebar = () => {
       <Select
         className="w-[70%]"
         showSearch
-        loading={isLoading}
+        loading={isCountriesLoading}
         placeholder="Select a country"
         onChange={onChange}
         options={allCountries}
