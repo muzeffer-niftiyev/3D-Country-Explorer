@@ -18,7 +18,7 @@ export const getCountryDataFromCode = async (code) => {
     const data = await response.json();
     const obj = data[0];
     const formatted = {
-      name: obj.name.official,
+      name: obj.name.common,
       capital: obj.capital[0],
       area: obj.area,
       continents: obj.continents,
@@ -28,6 +28,7 @@ export const getCountryDataFromCode = async (code) => {
       languages: obj.languages,
       code: obj.cca2,
     };
+    console.log(formatted);
     return formatted;
   } catch (err) {
     console.error(err);
@@ -40,7 +41,7 @@ export const getAllCountryNames = async () => {
     const data = await response.json();
     const filtered = data
       .map((country) => ({
-        name: country.name.official,
+        name: country.name.common,
         code: country.cca2,
       }))
       .sort((a, b) => a.name.localeCompare(b.name));

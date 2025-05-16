@@ -1,47 +1,26 @@
-import { useSelector } from "react-redux";
+import LikeButton from "./LikeButton";
+import {
+  formatArea,
+  formatCurrency,
+  formatPopulation,
+} from "../utils/formatters";
 
-const DataCard = () => {
-  const countryData = useSelector((state) => state.country.selectedCountryData);
-
-  const formatPopulation = (population) => {
-    if (population >= 1000000000) {
-      return (population / 1000000000).toFixed(2) + " Billion";
-    } else if (population >= 1000000) {
-      return (population / 1000000).toFixed(2) + " Million";
-    }
-    return population;
-  };
-
-  const formatArea = (area) => {
-    if (area >= 1000000) {
-      return (area / 1000000).toFixed(2) + " Million km²";
-    }
-    return area + " km²";
-  };
-
-  const formatCurrency = (currency) => {
-    const currencyEntry = Object.entries(currency);
-    const formatted = currencyEntry.map(([code, { symbol }]) => ({
-      code,
-      symbol,
-    }));
-
-    return formatted;
-  };
+const DataCard = ({ countryData }) => {
   if (!countryData || Object.keys(countryData).length === 0) return null;
 
   return (
-    <div className="bg-[#fcfcfc] my-10 w-full flex items-center flex-col py-5 px-3">
+    <div className="bg-[#fcfcfc] my-10 w-full flex items-center flex-col py-5 px-3 rounded-md relative">
+      <LikeButton countryData={countryData} />
       <img
         src={countryData.flagUrl}
         alt="flag"
-        className="w-[170px] h-[100px] object-cover border-4 border-neutral-800"
+        className="w-[200px] h-[120px] object-cover rounded-2xl border-4 border-neutral-800"
       />
       <h3 className="mt-3 uppercase text-lg text-gray-900 font-bold text-center">
         {countryData.name}
       </h3>
 
-      <div className="grid grid-cols-[1fr_1fr] gap-x-8 gap-y-6 mt-5 w-full">
+      <div className="mt-5 w-full flex gap-2 flex-col">
         <div className="flex gap-2 items-center w-full">
           <p className="font-semibold text-md">Capital: </p>
           <p className="font-bold text-lg">{countryData.capital}</p>

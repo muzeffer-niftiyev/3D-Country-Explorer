@@ -10,9 +10,11 @@ import {
 import gsap from "gsap";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
+import { useNavigate } from "react-router-dom";
 
 const Earth = () => {
   const theme = useSelector((state) => state.theme.theme);
+  const navigate = useNavigate();
   const [lightTexture, darkTexture] = useLoader(TextureLoader, [
     "/lightTexture.jpg",
     "/darkTexture.jpg",
@@ -42,6 +44,7 @@ const Earth = () => {
   };
 
   const handleEarthClick = async (event) => {
+    navigate("country-details");
     const mouse = new THREE.Vector2();
     const rect = gl.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;

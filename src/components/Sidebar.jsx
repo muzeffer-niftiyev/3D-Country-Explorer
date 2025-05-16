@@ -1,79 +1,31 @@
-import { Select } from "antd";
-import {
-  getAllCountryNames,
-  getCountryDataFromCode,
-} from "../services/services";
-import { useEffect, useState } from "react";
-import DataCard from "./DataCard";
-import { useDispatch, useSelector } from "react-redux";
-import Loader from "./Loader";
-import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
+import { NavLink, Outlet } from "react-router-dom";
 
 const Sidebar = () => {
-  const [allCountries, setAllCountries] = useState([]);
-  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
-  const dispatch = useDispatch();
-  const isDataLoading = useSelector((state) => state.country.isLoading);
-  const selectedCountry = useSelector(
-    (state) => state.country.selectedCountryData
-  );
-
-  const onChange = (value) => {
-    const getCountryData = async () => {
-      try {
-        dispatch(setIsLoading(true));
-        const data = await getCountryDataFromCode(value);
-        if (data) {
-          dispatch(setSelectedCountryData(data));
-        } else {
-          console.log("Error setting country code");
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    };
-    getCountryData();
-  };
-
-  useEffect(() => {
-    const fetchCountries = async () => {
-      const countries = await getAllCountryNames();
-      if (countries && countries.length) {
-        const formatted = countries.map((country) => ({
-          label: country.name,
-          value: country.code,
-        }));
-        setAllCountries(formatted);
-      }
-      setIsCountriesLoading(false);
-    };
-
-    fetchCountries();
-  }, []);
-
   return (
-    <div className="bg-white dark:bg-[#0f0f18] h-full p-6 flex items-center flex-col transition-all duration-800">
-      <h1 className="font-medium text-xl mb-8 text-[#222] dark:text-[#eee]">
-        Welcome to the <span className="font-bold">Countries Explorer</span>!
-        Choose a country to explore by clicking on the 3D Earth or selecting
-        from the dropdown list.
-      </h1>
-
-      <Select
-        className="w-[70%]"
-        showSearch
-        loading={isCountriesLoading}
-        placeholder="Select a country"
-        onChange={onChange}
-        options={allCountries}
-        value={selectedCountry?.name || null}
-        filterOption={(input, option) =>
-          (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-        }
-      />
-      {isDataLoading ? <Loader /> : <DataCard />}
+    <div className="bg-white dark:bg-[#0f0f18] h-full p-6 flex items-center flex-col">
+      <div className="mb-8">
+        <NavLink
+          to={"country-details"}
+          className={({ isActive }) =>
+            `text-[#333] py-2 px-3 rounded-tl-lg rounded-bl-lg  ${
+              isActive ? "bg-[#e4e4e9] font-semibold" : "bg-[#eeeef1]"
+            }`
+          }
+        >
+          Explore
+        </NavLink>
+        <NavLink
+          to={"liked"}
+          className={({ isActive }) =>
+            `text-[#333] py-2 px-3 rounded-tr-lg rounded-br-lg  ${
+              isActive ? "bg-[#e4e4e9] font-semibold" : "bg-[#eeeef1]"
+            }`
+          }
+        >
+          Liked
+        </NavLink>
+      </div>
+      <Outlet />
     </div>
   );
 };
