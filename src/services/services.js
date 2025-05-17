@@ -28,7 +28,6 @@ export const getCountryDataFromCode = async (code) => {
       languages: obj.languages,
       code: obj.cca2,
     };
-    console.log(formatted);
     return formatted;
   } catch (err) {
     console.error(err);

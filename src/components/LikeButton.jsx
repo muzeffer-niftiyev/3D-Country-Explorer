@@ -18,11 +18,11 @@ const LikeButton = ({ countryData }) => {
   };
 
   return (
-    <button className="absolute right-3 cursor-pointer" onClick={handleClick}>
+    <button className="absolute right-3 cursor-pointer hover:scale-105 hover-opacity-90 transition-all duration-200" onClick={handleClick}>
       <Heart
         size={30}
-        fill={isLiked ? "red" : "none"}
-        color="red"
+        fill={isLiked ? "#dd1c3c" : "none"}
+        color="#dd1c3c"
         strokeWidth={3}
       />
     </button>

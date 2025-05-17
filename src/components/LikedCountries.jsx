@@ -2,27 +2,26 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import DataCard from "./DataCard";
 
-const FavouriteCountries = () => {
+const LikedCountries = () => {
   const likedCountries = useSelector((state) => state.liked.likedCountries);
   const [selectedCountry, setSelectedCountry] = useState(null);
 
   return (
-    <div className="flex h-full w-full my-4">
-      <div className="w-[30%] border-r pr-2">
+    <div className="flex h-full w-full my-4 overflow-y-hidden">
+      <div className="w-[30%] h-[90%] pr-2">
         <h2 className="text-xl font-semibold mb-4">Liked Countries</h2>
         <div className="h-[90%] overflow-y-auto">
           {likedCountries.map((country) => (
-            <p
+            <div
               key={country.code}
-              className={`w-full p-2 rounded cursor-pointer hover:bg-blue-100 ${
-                selectedCountry?.code === country.code
-                  ? "bg-blue-50 font-medium"
-                  : ""
+              className={`w-full p-2 rounded cursor-pointer text-md ${
+                selectedCountry?.code === country.code &&
+                "bg-blue-50 font-medium"
               }`}
               onClick={() => setSelectedCountry(country)}
             >
               {country.name}
-            </p>
+            </div>
           ))}
         </div>
       </div>
@@ -40,4 +39,4 @@ const FavouriteCountries = () => {
   );
 };
 
-export default FavouriteCountries;
+export default LikedCountries;

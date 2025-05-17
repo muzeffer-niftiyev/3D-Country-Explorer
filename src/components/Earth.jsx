@@ -19,7 +19,6 @@ const Earth = () => {
     "/lightTexture.jpg",
     "/darkTexture.jpg",
   ]);
-
   const texture = useMemo(() => {
     return theme === "dark" ? darkTexture : lightTexture;
   }, [theme, lightTexture, darkTexture]);

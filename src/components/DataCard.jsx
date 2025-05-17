@@ -5,22 +5,23 @@ import {
   formatPopulation,
 } from "../utils/formatters";
 
-const DataCard = ({ countryData }) => {
+const DataCard = ({ countryData, flagSize = { width: 220, height: 140 } }) => {
   if (!countryData || Object.keys(countryData).length === 0) return null;
 
   return (
-    <div className="bg-[#fcfcfc] my-10 w-full flex items-center flex-col py-5 px-3 rounded-md relative">
+    <div className="bg-amber-50 dark:bg-[#1d1d20] my-10 w-full flex items-center flex-col py-5 px-3 rounded-md relative text-neutral-900 dark:text-neutral-200 transition-all duration-600">
       <LikeButton countryData={countryData} />
       <img
         src={countryData.flagUrl}
         alt="flag"
-        className="w-[200px] h-[120px] object-cover rounded-2xl border-4 border-neutral-800"
+        style={{ width: `${flagSize.width}px`, height: `${flagSize.height}px` }}
+        className="object-cover rounded-2xl border-4 border-neutral-800 dark:border-neutral-200 transition-all duration-600"
       />
-      <h3 className="mt-3 uppercase text-lg text-gray-900 font-bold text-center">
+      <h3 className="mt-3 uppercase text-xl text-neutral-900 dark:text-neutral-200 font-bold text-center transition-all duration-600">
         {countryData.name}
       </h3>
 
-      <div className="mt-5 w-full flex gap-2 flex-col">
+      <div className="mt-5 ml-3 w-full flex gap-2 flex-col">
         <div className="flex gap-2 items-center w-full">
           <p className="font-semibold text-md">Capital: </p>
           <p className="font-bold text-lg">{countryData.capital}</p>

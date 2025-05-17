@@ -5,6 +5,27 @@ body {
   background-color: #0f0f16;
 }
 
+*::selection {
+  background-color: inherit;
+}
+
 .dropdown {
-  @apply h-12;
+  @apply h-12 bg-red-900;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #ece9e9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #464343;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2e2d2d;
 }

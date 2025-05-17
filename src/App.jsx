@@ -11,7 +11,7 @@ const App = () => {
   return (
     <div className="flex">
       <div className="w-[35dvw] h-[100dvh] py-8 pl-8">
-        <Sidebar/>
+        <Sidebar />
       </div>
       <div className="w-[65dvw] h-[100dvh] relative">
         <ThemeToggle />
@@ -29,7 +29,7 @@ const App = () => {
           <Suspense
             fallback={
               <Html>
-                <Loader />
+                <Loader color="text-[#eee]" />
               </Html>
             }
           >
@@ -45,12 +45,8 @@ const App = () => {
 export default App;
 
 // TODO
-// 1) Data Card design deyismek lazmdi  *
-// 2) Olke muqayise etmek sehifesi: favourite elave olunanlari population ve area muqayisesi etmek *
-// 3) Favourite elave olanlar store olunur, internet olmadigdada baxila bilmelidi *****
-// 4) Muqayise ucun favourite olkelerden secim edilecek *
-// 5) Dark Light mode rengler duzelis edilmelidi *** 
-// 6) Router de page not found componentini duzelt **
-
-
-
+// 1) Olke muqayise etmek sehifesi: favourite elave olunanlari population ve area muqayisesi etmek *
+// 2) Muqayise ucun favourite olkelerden secim edilecek *
+// 3) Dark Light mode rengler duzelis edilmelidi ***
+// 4) Router de page not found componentini duzelt **
+// 5) Liked-de internetsiz girende img yoxdu deye yerine text gostermek lazmdi ****
