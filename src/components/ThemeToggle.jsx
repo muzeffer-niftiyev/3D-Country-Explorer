@@ -32,7 +32,7 @@ const ThemeToggle = () => {
     <div className="flex justify-end w-full">
       <button
         onClick={toggleTheme}
-        className="p-2.5 cursor-pointer rounded-2xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 my-8 mx-5 absolute z-2 transition-all duration-600"
+        className="p-2.5 cursor-pointer rounded-2xl bg-gray-200 dark:bg-zinc-900 text-gray-800 dark:text-gray-100 my-8 mx-5 absolute z-2 transition-all duration-600"
       >
         {theme === "light" ? <Sun size={25} /> : <Moon size={25} />}
       </button>

@@ -27,6 +27,7 @@ export const getCountryDataFromCode = async (code) => {
       population: obj.population,
       languages: obj.languages,
       code: obj.cca2,
+      coordinates: obj.latlng,
     };
     return formatted;
   } catch (err) {

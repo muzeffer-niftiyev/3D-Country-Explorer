@@ -6,5 +6,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     open: true,
+    host: true,
   },
 });

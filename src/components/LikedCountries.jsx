@@ -28,7 +28,10 @@ const LikedCountries = () => {
 
       <div className="w-[70%] pl-2">
         {selectedCountry ? (
-          <DataCard countryData={selectedCountry} />
+          <DataCard
+            countryData={selectedCountry}
+            flagSize={{ width: 200, height: 120 }}
+          />
         ) : (
           <p className="text-gray-500">
             Select a country from the left to view its details.
