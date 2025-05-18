@@ -1,9 +1,9 @@
 import DataCard from "./DataCard";
 import { useSelector } from "react-redux";
 import Loader from "./Loader";
-import Searchbar from "./Searchbar";
+import ExploreSearchbar from "./ExploreSearchbar";
 
-const CountryDetails = () => {
+const ExploreCountries = () => {
   const isDataLoading = useSelector((state) => state.country.isLoading);
   const countryData = useSelector((state) => state.country.selectedCountryData);
 
@@ -14,10 +14,10 @@ const CountryDetails = () => {
         Choose a country to explore by clicking on the 3D Earth or selecting
         from the dropdown list.
       </h1>
-      <Searchbar />
+      <ExploreSearchbar />
       {isDataLoading ? <Loader /> : <DataCard countryData={countryData} />}
     </>
   );
 };
 
-export default CountryDetails;
+export default ExploreCountries;

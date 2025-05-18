@@ -1,76 +1,50 @@
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setFlyCoordinates,
-  setIsLoading,
-  setSelectedCountryData,
   toggleIsCountryChanged,
 } from "../store/countrySlice";
-import { useEffect, useState } from "react";
-import {
-  getAllCountryNames,
-  getCountryDataFromCode,
-} from "../services/services";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
 
-const Searchbar = () => {
-  const [allCountries, setAllCountries] = useState([]);
-  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
-  const dispatch = useDispatch();
-  const selectedCountry = useSelector(
-    (state) => state.country.selectedCountryData
-  );
+const LikedSearchbar = ({
+  likedCountries,
+  selectedCountry,
+  setSelectedCountry,
+}) => {
   const theme = useSelector((state) => state.theme.theme);
+  const [options, setOptions] = useState([]);
+  const dispatch = useDispatch();
 
   const onChange = (value) => {
-    const getCountryData = async () => {
-      try {
-        dispatch(setIsLoading(true));
-        const data = await getCountryDataFromCode(value);
-        if (data) {
-          dispatch(setSelectedCountryData(data));
-          if (data.coordinates) {
-            dispatch(toggleIsCountryChanged());
-            dispatch(
-              setFlyCoordinates({
-                lat: data.coordinates[0],
-                lng: data.coordinates[1],
-              })
-            );
-          }
-        } else {
-          console.log("Error setting country code");
-        }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    };
-    getCountryData();
+    console.log(value);
+    const selected = likedCountries.find((c) => c.code === value);
+    if (selected) {
+      setSelectedCountry(selected);
+      dispatch(toggleIsCountryChanged());
+      dispatch(
+        setFlyCoordinates({
+          lat: selected.coordinates[0],
+          lng: selected.coordinates[1],
+        })
+      );
+    }
   };
 
   useEffect(() => {
-    const fetchCountries = async () => {
-      const countries = await getAllCountryNames();
-      if (countries && countries.length) {
-        const formatted = countries.map((country) => ({
-          label: country.name,
-          value: country.code,
-        }));
-        setAllCountries(formatted);
-      }
-      setIsCountriesLoading(false);
-    };
-
-    fetchCountries();
-  }, []);
+    if (likedCountries?.length) {
+      const formatted = likedCountries.map((country) => ({
+        label: country.name,
+        value: country.code,
+      }));
+      setOptions(formatted);
+    }
+  }, [likedCountries]);
 
   return (
     <Autocomplete
       disablePortal
-      options={allCountries}
-      loading={isCountriesLoading}
+      options={options}
       getOptionLabel={(option) => option.label}
       groupBy={(option) => option.label[0].toUpperCase()}
       isOptionEqualToValue={(option, value) => option.value === value.value}
@@ -90,7 +64,7 @@ const Searchbar = () => {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Select a country"
+          label="Select a liked country"
           variant="outlined"
           sx={{
             backgroundColor: theme === "light" ? "#fffbeb" : "#1d1d20",
@@ -117,10 +91,25 @@ const Searchbar = () => {
             "& .MuiAutocomplete-popupIndicator": {
               color: theme === "light" ? "#212121" : "#f3f2ef",
             },
+            "& .MuiAutocomplete-clearIndicator": {
+              color: theme === "light" ? "#212121" : "#f3f2ef",
+            },
           }}
         />
       )}
       sx={{ width: "70%" }}
+      componentsProps={{
+        paper: {
+          sx: {
+            backgroundColor: theme === "light" ? "#fffbeb" : "#1d1d20",
+            color: theme === "light" ? "#212121" : "#f3f2ef",
+            "& .MuiAutocomplete-noOptions": {
+              padding: "12px",
+              color: theme === "light" ? "#212121" : "#f3f2ef",
+            },
+          },
+        },
+      }}
       renderGroup={(params) => (
         <li
           key={params.key}
@@ -136,4 +125,4 @@ const Searchbar = () => {
   );
 };
 
-export default Searchbar;
+export default LikedSearchbar;

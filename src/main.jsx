@@ -8,7 +8,7 @@ import Router from "./Router.jsx";
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
-        <Router />
+      <Router />
     </Provider>
   </BrowserRouter>
 );

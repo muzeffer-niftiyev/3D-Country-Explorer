@@ -4,7 +4,7 @@ import { useRef, useState, useMemo, useEffect } from "react";
 import { useLoader, useThree } from "@react-three/fiber";
 import { TextureLoader } from "three";
 import * as THREE from "three";
-import { Sphere, OrbitControls } from "@react-three/drei";
+import { Sphere, OrbitControls, Html } from "@react-three/drei";
 import gsap from "gsap";
 import {
   getCountryCodeFromEarth,
@@ -32,6 +32,7 @@ const Earth = () => {
   const controlsRef = useRef();
   const { camera, gl } = useThree();
   const [isDragging, setIsDragging] = useState(false);
+  const [pinPosition, setPinPosition] = useState(null);
 
   const getLatLngfromEarth = (vector) => {
     const lat = 90 - (Math.acos(vector.y) * 180) / Math.PI;
@@ -73,21 +74,19 @@ const Earth = () => {
 
   const handleEarthClick = async (event) => {
     navigate("country-details");
-
     const mouse = new THREE.Vector2();
     const rect = gl.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(mouse, camera);
 
     const intersects = raycaster.intersectObject(earthRef.current, true);
     if (intersects.length > 0) {
       const point = intersects[0].point.clone().normalize().multiplyScalar(2.5);
-      flyTo(...Object.values(getLatLngfromEarth(point.clone().normalize())));
       const { lat, lng } = getLatLngfromEarth(point.clone().normalize());
-
+      flyTo(lat, lng);
+      setPinPosition(getVectorFromLatLng(lat, lng, 1));
       try {
         dispatch(setIsLoading(true));
         const countryCode = await getCountryCodeFromEarth(lat, lng);
@@ -105,6 +104,12 @@ const Earth = () => {
 
   useEffect(() => {
     if (flyCoordinates.lat && flyCoordinates.lng) {
+      const pos = getVectorFromLatLng(
+        flyCoordinates.lat,
+        flyCoordinates.lng,
+        1
+      );
+      setPinPosition(pos);
       flyTo(flyCoordinates.lat, flyCoordinates.lng);
     }
   }, [isCountryChanged, flyCoordinates]);
@@ -140,6 +145,18 @@ const Earth = () => {
           opacity={1}
         />
       </Sphere>
+      {pinPosition && (
+        <Html
+          args={[0.01, 8, 8]}
+          position={pinPosition}
+          occlude={[earthRef]}
+        >
+          <button className="relative w-5 h-5 cursor-pointer transition-none">
+            <span className="absolute inset-0 rounded-full ring-2 ring-neutral-900 dark:ring-neutral-200 animate-ping" />
+            <div className="w-full h-full rounded-full bg-neutral-900 dark:bg-neutral-200 z-10 relative opacity-[.7]"></div>
+          </button>
+        </Html>
+      )}
     </>
   );
 };

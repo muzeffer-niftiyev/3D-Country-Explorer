@@ -5,7 +5,7 @@ import {
   formatPopulation,
 } from "../utils/formatters";
 
-const DataCard = ({ countryData, flagSize = { width: 220, height: 140 } }) => {
+const DataCard = ({ countryData }) => {
   if (!countryData || Object.keys(countryData).length === 0) return null;
 
   return (
@@ -14,8 +14,7 @@ const DataCard = ({ countryData, flagSize = { width: 220, height: 140 } }) => {
       <img
         src={countryData.flagUrl}
         alt="flag"
-        style={{ width: `${flagSize.width}px`, height: `${flagSize.height}px` }}
-        className="object-cover rounded-2xl border-4 border-neutral-800 dark:border-neutral-200 transition-all duration-600"
+        className="w-[220px] h-[140px] object-cover rounded-2xl border-4 border-neutral-800 dark:border-neutral-200 transition-all duration-600"
       />
       <h3 className="mt-3 uppercase text-xl text-neutral-900 dark:text-neutral-200 font-bold text-center transition-all duration-600">
         {countryData.name}
