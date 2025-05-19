@@ -10,9 +10,8 @@ const Router = () => {
         <Route index element={<Navigate replace to="country-details" />} />
         <Route path="country-details" element={<ExploreCountries />} />
         <Route path="liked" element={<LikedCountries />} />
+        <Route path="*" element={<Navigate replace to="/country-details" />} />
       </Route>
-
-      {/* <Route path="*" element={<PageNotFound />} /> */}
     </Routes>
   );
 };

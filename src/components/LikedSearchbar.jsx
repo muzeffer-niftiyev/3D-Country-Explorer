@@ -6,9 +6,10 @@ import {
   setFlyCoordinates,
   toggleIsCountryChanged,
 } from "../store/countrySlice";
+import { selectStyle } from "../utils/miuStyle";
 
 const LikedSearchbar = ({
-  likedCountries,
+  sortedLikedCountries,
   selectedCountry,
   setSelectedCountry,
 }) => {
@@ -17,8 +18,7 @@ const LikedSearchbar = ({
   const dispatch = useDispatch();
 
   const onChange = (value) => {
-    console.log(value);
-    const selected = likedCountries.find((c) => c.code === value);
+    const selected = sortedLikedCountries.find((c) => c.code === value);
     if (selected) {
       setSelectedCountry(selected);
       dispatch(toggleIsCountryChanged());
@@ -32,14 +32,14 @@ const LikedSearchbar = ({
   };
 
   useEffect(() => {
-    if (likedCountries?.length) {
-      const formatted = likedCountries.map((country) => ({
+    if (sortedLikedCountries?.length) {
+      const formatted = sortedLikedCountries.map((country) => ({
         label: country.name,
         value: country.code,
       }));
       setOptions(formatted);
     }
-  }, [likedCountries]);
+  }, [sortedLikedCountries]);
 
   return (
     <Autocomplete
@@ -66,35 +66,7 @@ const LikedSearchbar = ({
           {...params}
           label="Select a liked country"
           variant="outlined"
-          sx={{
-            backgroundColor: theme === "light" ? "#fffbeb" : "#1d1d20",
-            transition: "all 0.6s ease",
-            "& .MuiOutlinedInput-root": {
-              color: theme === "light" ? "#212121" : "#f3f2ef",
-              "& fieldset": {
-                borderColor: "#ccc3c3",
-                borderWidth: 2,
-              },
-              "&:hover fieldset": {
-                borderColor: "#d1d5db",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#d1d5db",
-              },
-            },
-            "& .MuiInputLabel-root": {
-              color: theme === "light" ? "#616161" : "#eee",
-              "&.Mui-focused": {
-                color: theme === "light" ? "#616161" : "#eee",
-              },
-            },
-            "& .MuiAutocomplete-popupIndicator": {
-              color: theme === "light" ? "#212121" : "#f3f2ef",
-            },
-            "& .MuiAutocomplete-clearIndicator": {
-              color: theme === "light" ? "#212121" : "#f3f2ef",
-            },
-          }}
+          sx={selectStyle(theme)}
         />
       )}
       sx={{ width: "70%" }}

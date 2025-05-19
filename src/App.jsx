@@ -6,6 +6,7 @@ import Loader from "./components/Loader";
 import { Html } from "@react-three/drei";
 import ThemeToggle from "./components/ThemeToggle";
 import PreloadTextures from "./components/PreloadTextures";
+import ToastProvider from "./components/ToastProvider";
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
           </Suspense>
         </Canvas>
       </div>
+      <ToastProvider/>
     </div>
   );
 };
@@ -45,8 +47,4 @@ const App = () => {
 export default App;
 
 // TODO
-// 1) Olke muqayise etmek sehifesi: favourite elave olunanlari population ve area muqayisesi etmek *
-// 2) Muqayise ucun favourite olkelerden secim edilecek *
-// 3) Dark Light mode rengler duzelis edilmelidi ***
-// 4) Router de page not found componentini duzelt **
-// 5) Liked-de internetsiz girende img yoxdu deye yerine text gostermek lazmdi ****
+// 1) Router de page not found componentini duzelt **

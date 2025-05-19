@@ -11,6 +11,7 @@ import {
   getCountryDataFromCode,
 } from "../services/services";
 import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
+import toast from "react-hot-toast";
 
 const Earth = () => {
   const dispatch = useDispatch();
@@ -93,9 +94,18 @@ const Earth = () => {
         if (countryCode) {
           const countryData = await getCountryDataFromCode(countryCode);
           dispatch(setSelectedCountryData(countryData));
+        } else {
+          dispatch(setSelectedCountryData({}));
+          throw new Error("No country found at that location!");
         }
       } catch (error) {
-        console.error(error);
+        if (!navigator.onLine) {
+          toast.error("No internet connection. Please check your network.");
+        } else if (error.message === "No country found at that location!") {
+          toast.error(error.message);
+        } else {
+          toast.error("Failed to load country data. Please try again.");
+        }
       } finally {
         dispatch(setIsLoading(false));
       }
@@ -146,11 +156,7 @@ const Earth = () => {
         />
       </Sphere>
       {pinPosition && (
-        <Html
-          args={[0.01, 8, 8]}
-          position={pinPosition}
-          occlude={[earthRef]}
-        >
+        <Html args={[0.01, 8, 8]} position={pinPosition} occlude={[earthRef]}>
           <button className="relative w-5 h-5 cursor-pointer transition-none">
             <span className="absolute inset-0 rounded-full ring-2 ring-neutral-900 dark:ring-neutral-200 animate-ping" />
             <div className="w-full h-full rounded-full bg-neutral-900 dark:bg-neutral-200 z-10 relative opacity-[.7]"></div>

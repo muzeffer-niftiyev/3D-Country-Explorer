@@ -5,15 +5,17 @@ import {
   setSelectedCountryData,
   toggleIsCountryChanged,
 } from "../store/countrySlice";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   getAllCountryNames,
   getCountryDataFromCode,
 } from "../services/services";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import { selectStyle } from "../utils/miuStyle";
+import toast from "react-hot-toast";
 
-const ExploreSearchbar = () => {
+const ExploreSearchbar = ({ regionFilter }) => {
   const [allCountries, setAllCountries] = useState([]);
   const [isCountriesLoading, setIsCountriesLoading] = useState(true);
   const dispatch = useDispatch();
@@ -39,10 +41,15 @@ const ExploreSearchbar = () => {
             );
           }
         } else {
-          console.log("Error setting country code");
+          dispatch(setSelectedCountryData({}));
+          toast.error("Country data not found.");
         }
-      } catch (error) {
-        console.error(error);
+      } catch {
+        if (!navigator.onLine) {
+          toast.error("No internet connection. Please check your network.");
+        } else {
+          toast.error("Failed to fetch country data. Please try again.");
+        }
       } finally {
         dispatch(setIsLoading(false));
       }
@@ -50,13 +57,25 @@ const ExploreSearchbar = () => {
     getCountryData();
   };
 
+  const filteredCountries = useMemo(() => {
+    if (regionFilter === "All") return allCountries;
+    return allCountries.filter((country) =>
+      country.value.continents?.some((continent) =>
+        continent.toLowerCase().includes(regionFilter.toLowerCase())
+      )
+    );
+  }, [regionFilter, allCountries]);
+
   useEffect(() => {
     const fetchCountries = async () => {
       const countries = await getAllCountryNames();
       if (countries && countries.length) {
         const formatted = countries.map((country) => ({
           label: country.name,
-          value: country.code,
+          value: {
+            code: country.code,
+            continents: country.continents,
+          },
         }));
         setAllCountries(formatted);
       }
@@ -69,7 +88,8 @@ const ExploreSearchbar = () => {
   return (
     <Autocomplete
       disablePortal
-      options={allCountries}
+      className="w-[65%]"
+      options={filteredCountries}
       loading={isCountriesLoading}
       getOptionLabel={(option) => option.label}
       groupBy={(option) => option.label[0].toUpperCase()}
@@ -80,7 +100,7 @@ const ExploreSearchbar = () => {
           : null
       }
       onChange={(_, newValue) => {
-        if (newValue) onChange(newValue.value);
+        if (newValue) onChange(newValue.value.code);
       }}
       filterOptions={(options, { inputValue }) =>
         options.filter((option) =>
@@ -92,43 +112,9 @@ const ExploreSearchbar = () => {
           {...params}
           label="Select a country"
           variant="outlined"
-          sx={{
-            backgroundColor: theme === "light" ? "#fffbeb" : "#1d1d20",
-            transition: "all 0.6s ease",
-            "& .MuiOutlinedInput-root": {
-              color: theme === "light" ? "#212121" : "#f3f2ef",
-              "& fieldset": {
-                borderColor: "#ccc3c3",
-                borderWidth: 2,
-              },
-              "&:hover fieldset": {
-                borderColor: "#d1d5db",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#d1d5db",
-              },
-            },
-            "& .MuiInputLabel-root": {
-              color: theme === "light" ? "#616161" : "#eee",
-              "&.Mui-focused": {
-                color: theme === "light" ? "#616161" : "#eee",
-              },
-            },
-            "& .MuiAutocomplete-popupIndicator": {
-              color: theme === "light" ? "#212121" : "#f3f2ef",
-            },
-            "& .MuiAutocomplete-clearIndicator": {
-              color: theme === "light" ? "#212121" : "#f3f2ef",
-            },
-            "& .MuiAutocomplete-noOptions": {
-              backgroundColor: theme === "light" ? "#fffbeb" : "#1d1d20",
-              color: theme === "light" ? "#212121" : "#f3f2ef",
-              padding: "10px 16px",
-            },
-          }}
+          sx={selectStyle(theme)}
         />
       )}
-      sx={{ width: "70%" }}
       componentsProps={{
         paper: {
           sx: {

@@ -29,6 +29,7 @@ export const getCountryDataFromCode = async (code) => {
       code: obj.cca2,
       coordinates: obj.latlng,
     };
+    console.log(formatted.continents);
     return formatted;
   } catch (err) {
     console.error(err);
@@ -43,9 +44,9 @@ export const getAllCountryNames = async () => {
       .map((country) => ({
         name: country.name.common,
         code: country.cca2,
+        continents: country.continents,
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
-
     return filtered;
   } catch (err) {
     console.error(err);

@@ -1,19 +1,22 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import DataCard from "./DataCard";
 import LikedSearchbar from "./LikedSearchbar";
 
 const LikedCountries = () => {
   const likedCountries = useSelector((state) => state.liked.likedCountries);
+  const sortedLikedCountries = [...likedCountries].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
   const [selectedCountry, setSelectedCountry] = useState(null);
 
   return (
     <>
-      {likedCountries.length ? (
+      {sortedLikedCountries.length ? (
         <div className="h-full w-full my-4 dark:text-neutral-200 transition-colors duration-600">
           <div className="w-full flex justify-center mb-6">
             <LikedSearchbar
-              likedCountries={likedCountries}
+              sortedLikedCountries={sortedLikedCountries}
               selectedCountry={selectedCountry}
               setSelectedCountry={setSelectedCountry}
             />
@@ -24,7 +27,7 @@ const LikedCountries = () => {
               <DataCard countryData={selectedCountry} />
             ) : (
               <p className="text-gray-500 dark:text-neutral-200 transition-colors duration-600 text-center mt-3">
-                Select a country from the left to view its details.
+                Pick a country you’ve liked to explore its details.
               </p>
             )}
           </div>

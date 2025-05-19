@@ -1,6 +1,7 @@
 import { Heart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToLiked, removeFromLiked } from "../store/likedSlice";
+import toast from "react-hot-toast";
 
 const LikeButton = ({ countryData }) => {
   const dispatch = useDispatch();
@@ -12,8 +13,10 @@ const LikeButton = ({ countryData }) => {
   const handleClick = () => {
     if (isLiked) {
       dispatch(removeFromLiked(countryData.code));
+      toast.success(`${countryData.name} removed from liked countries.`);
     } else {
       dispatch(addToLiked(countryData));
+      toast.success(`${countryData.name} added to liked countries.`);
     }
   };
 
