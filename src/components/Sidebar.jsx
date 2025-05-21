@@ -2,8 +2,8 @@ import { NavLink, Outlet } from "react-router-dom";
 
 const Sidebar = () => {
   return (
-    <div className="bg-[#faf3d2] dark:bg-zinc-900 h-full p-6 flex items-center flex-col transition-all duration-600">
-      <div className="mb-8">
+    <div className="bg-[#faf3d2] dark:bg-zinc-900 h-full overflow-hidden p-6 flex items-center flex-col transition-all duration-600">
+      <div className="mb-5">
         <NavLink
           to={"country-details"}
           className={({ isActive }) =>

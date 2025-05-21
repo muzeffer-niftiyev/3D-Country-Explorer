@@ -1,7 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import Earth from "./components/Earth";
 import Sidebar from "./components/Sidebar";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Loader from "./components/Loader";
 import { Html } from "@react-three/drei";
 import ThemeToggle from "./components/ThemeToggle";
@@ -9,6 +9,26 @@ import PreloadTextures from "./components/PreloadTextures";
 import ToastProvider from "./components/ToastProvider";
 
 const App = () => {
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsSmallScreen(window.innerWidth < 1000);
+    };
+
+    checkScreenSize();
+    window.addEventListener("resize", checkScreenSize);
+    return () => window.removeEventListener("resize", checkScreenSize);
+  }, []);
+
+  if (isSmallScreen) {
+    return (
+      <div className="h-screen flex items-center justify-center font-bold text-center bg-[#0f0f16] text-[#eee] text-xl p-4">
+        Please use a larger screen to access this website.
+      </div>
+    );
+  }
+
   return (
     <div className="flex">
       <div className="w-[35dvw] h-[100dvh] py-8 pl-8">
@@ -46,5 +66,3 @@ const App = () => {
 
 export default App;
 
-// TODO
-// 1) Router de page not found componentini duzelt **

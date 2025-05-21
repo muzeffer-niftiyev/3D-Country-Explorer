@@ -140,7 +140,7 @@ const Earth = () => {
       <ambientLight intensity={2.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} />
       <Sphere
-        args={[1, 32, 32]}
+        args={[1,32,32]}
         ref={earthRef}
         onPointerDown={() => setIsDragging(false)}
         onPointerMove={() => setIsDragging(true)}

@@ -39,7 +39,7 @@ const DataCard = ({ countryData }) => {
   if (!countryData || Object.keys(countryData).length === 0) return null;
 
   return (
-    <div className="bg-amber-50 dark:bg-[#1d1d20] my-10 w-full flex items-center flex-col py-5 px-3 rounded-md relative text-neutral-900 dark:text-neutral-200 transition-all duration-600">
+    <div className="bg-amber-50 dark:bg-[#1d1d20] my-6 w-full overflow-y-auto overflow-x-hidden flex items-center flex-col p-5 rounded-md relative text-neutral-900 dark:text-neutral-200 transition-all duration-600">
       <LikeButton countryData={countryData} />
       {showImg ? (
         <img
@@ -50,7 +50,7 @@ const DataCard = ({ countryData }) => {
           className="w-[240px] h-[130px] object-cover rounded-2xl border-4 border-neutral-800 dark:border-neutral-200 transition-all duration-600"
         />
       ) : (
-        <div className="w-[220px] text-gray-500 dark:text-neutral-200 flex items-center justify-center text-md text-center px-2">
+        <div className="w-[200px] text-gray-500 dark:text-neutral-200 flex items-center justify-center text-md text-center px-2">
           Connect to the internet to view this country's flag.
         </div>
       )}
@@ -58,7 +58,7 @@ const DataCard = ({ countryData }) => {
         {countryData.name}
       </h3>
 
-      <div className="mt-5 ml-3 w-full flex gap-2 flex-col">
+      <div className="mt-5 ml-3 w-full grid grid-cols-1 gap-2 max-h-screen">
         <div className="flex gap-2 items-center w-full">
           <p className="font-semibold text-md">Capital: </p>
           <p className="font-bold text-lg">{countryData.capital}</p>
