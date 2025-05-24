@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { Moon, Sun } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
 import { setTheme } from "../store/themeSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const ThemeToggle = () => {
-  const theme = useSelector((state) => state.theme.theme);
   const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme.theme);
 
   useEffect(() => {
     if (

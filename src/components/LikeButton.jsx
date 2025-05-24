@@ -1,7 +1,7 @@
+import toast from "react-hot-toast";
 import { Heart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToLiked, removeFromLiked } from "../store/likedSlice";
-import toast from "react-hot-toast";
 
 const LikeButton = ({ countryData }) => {
   const dispatch = useDispatch();
@@ -21,7 +21,10 @@ const LikeButton = ({ countryData }) => {
   };
 
   return (
-    <button className="absolute right-3 cursor-pointer hover:scale-105 hover-opacity-90 transition-all duration-200" onClick={handleClick}>
+    <button
+      className="absolute right-3 cursor-pointer hover:scale-105 hover-opacity-90 transition-all duration-200"
+      onClick={handleClick}
+    >
       <Heart
         size={30}
         fill={isLiked ? "#dd1c3c" : "none"}

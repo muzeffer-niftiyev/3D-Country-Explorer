@@ -5,8 +5,8 @@ import likedSlice from "./likedSlice";
 
 export default configureStore({
   reducer: {
-    country: countrySlice,
-    theme: themeSlice,
     liked: likedSlice,
+    theme: themeSlice,
+    country: countrySlice,
   },
 });

@@ -1,17 +1,17 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useRef, useState, useMemo, useEffect } from "react";
-import { useLoader, useThree } from "@react-three/fiber";
-import { TextureLoader } from "three";
-import * as THREE from "three";
-import { Sphere, OrbitControls, Html } from "@react-three/drei";
 import gsap from "gsap";
 import {
   getCountryCodeFromEarth,
   getCountryDataFromCode,
 } from "../services/services";
-import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
+import * as THREE from "three";
 import toast from "react-hot-toast";
+import { TextureLoader } from "three";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLoader, useThree } from "@react-three/fiber";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { Sphere, OrbitControls, Html } from "@react-three/drei";
+import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
 
 const Earth = () => {
   const dispatch = useDispatch();
@@ -28,12 +28,12 @@ const Earth = () => {
   const isCountryChanged = useSelector(
     (state) => state.country.isCountryChanged
   );
-  const flyCoordinates = useSelector((state) => state.country.flyCoordinates);
   const earthRef = useRef();
   const controlsRef = useRef();
   const { camera, gl } = useThree();
   const [isDragging, setIsDragging] = useState(false);
   const [pinPosition, setPinPosition] = useState(null);
+  const flyCoordinates = useSelector((state) => state.country.flyCoordinates);
 
   const getLatLngfromEarth = (vector) => {
     const lat = 90 - (Math.acos(vector.y) * 180) / Math.PI;
@@ -91,21 +91,15 @@ const Earth = () => {
       try {
         dispatch(setIsLoading(true));
         const countryCode = await getCountryCodeFromEarth(lat, lng);
-        if (countryCode) {
-          const countryData = await getCountryDataFromCode(countryCode);
-          dispatch(setSelectedCountryData(countryData));
-        } else {
-          dispatch(setSelectedCountryData({}));
-          throw new Error("No country found at that location!");
-        }
+        const countryData = await getCountryDataFromCode(countryCode);
+        dispatch(setSelectedCountryData(countryData));
       } catch (error) {
         if (!navigator.onLine) {
           toast.error("No internet connection. Please check your network.");
-        } else if (error.message === "No country found at that location!") {
-          toast.error(error.message);
         } else {
-          toast.error("Failed to load country data. Please try again.");
+          toast.error(error.message);
         }
+        dispatch(setSelectedCountryData({}));
       } finally {
         dispatch(setIsLoading(false));
       }
@@ -140,7 +134,7 @@ const Earth = () => {
       <ambientLight intensity={2.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} />
       <Sphere
-        args={[1,32,32]}
+        args={[1, 32, 32]}
         ref={earthRef}
         onPointerDown={() => setIsDragging(false)}
         onPointerMove={() => setIsDragging(true)}

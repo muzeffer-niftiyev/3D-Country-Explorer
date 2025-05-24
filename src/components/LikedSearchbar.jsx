@@ -1,24 +1,26 @@
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   setFlyCoordinates,
   toggleIsCountryChanged,
 } from "../store/countrySlice";
+import { useEffect, useState } from "react";
+import TextField from "@mui/material/TextField";
 import { selectStyle } from "../utils/miuStyle";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useDispatch, useSelector } from "react-redux";
 
 const LikedSearchbar = ({
-  sortedLikedCountries,
   selectedCountry,
   setSelectedCountry,
+  sortedLikedCountries,
 }) => {
-  const theme = useSelector((state) => state.theme.theme);
-  const [options, setOptions] = useState([]);
   const dispatch = useDispatch();
+  const [options, setOptions] = useState([]);
+  const theme = useSelector((state) => state.theme.theme);
 
   const onChange = (value) => {
-    const selected = sortedLikedCountries.find((c) => c.code === value);
+    const selected = sortedLikedCountries.find(
+      (country) => country.code === value
+    );
     if (selected) {
       setSelectedCountry(selected);
       dispatch(toggleIsCountryChanged());

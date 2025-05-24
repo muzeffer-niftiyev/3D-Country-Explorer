@@ -1,19 +1,19 @@
-import { Canvas } from "@react-three/fiber";
 import Earth from "./components/Earth";
-import Sidebar from "./components/Sidebar";
-import { Suspense, useEffect, useState } from "react";
-import Loader from "./components/Loader";
 import { Html } from "@react-three/drei";
+import Loader from "./components/Loader";
+import Sidebar from "./components/Sidebar";
+import { Canvas } from "@react-three/fiber";
 import ThemeToggle from "./components/ThemeToggle";
-import PreloadTextures from "./components/PreloadTextures";
+import { Suspense, useEffect, useState } from "react";
 import ToastProvider from "./components/ToastProvider";
+import PreloadTextures from "./components/PreloadTextures";
 
 const App = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsSmallScreen(window.innerWidth < 1000);
+      setIsSmallScreen(window.innerWidth < 1100);
     };
 
     checkScreenSize();
@@ -59,10 +59,9 @@ const App = () => {
           </Suspense>
         </Canvas>
       </div>
-      <ToastProvider/>
+      <ToastProvider />
     </div>
   );
 };
 
 export default App;
-

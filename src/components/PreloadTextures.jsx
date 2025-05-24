@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useThree, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
+import { useThree, useLoader } from "@react-three/fiber";
 
 const PreloadTextures = () => {
   const gl = useThree((state) => state.gl);

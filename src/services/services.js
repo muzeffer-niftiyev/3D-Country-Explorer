@@ -3,10 +3,16 @@ export const getCountryCodeFromEarth = async (lat, lng) => {
     const response = await fetch(
       `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}`
     );
+    if (!response.ok) {
+      throw new Error("Failed to load country data. Please try again.");
+    }
     const data = await response.json();
+    if (!data.countryCode) {
+      throw new Error("No country found at that location.");
+    }
     return data.countryCode;
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    throw new Error(error.message || "Error fetching country code.");
   }
 };
 
@@ -15,7 +21,13 @@ export const getCountryDataFromCode = async (code) => {
     const response = await fetch(
       `https://restcountries.com/v3.1/alpha/${code}`
     );
+    if (!response.ok) {
+      throw new Error("Failed to load country data. Please try again.");
+    }
     const data = await response.json();
+    if (!data || !data[0]) {
+      throw new Error("Failed to load country data. Please try again.");
+    }
     const obj = data[0];
     const formatted = {
       name: obj.name.common,
@@ -30,14 +42,17 @@ export const getCountryDataFromCode = async (code) => {
       coordinates: obj.latlng,
     };
     return formatted;
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    throw new Error(error.message || "Error fetching country details.");
   }
 };
 
 export const getAllCountryNames = async () => {
   try {
     const response = await fetch("https://restcountries.com/v3.1/all");
+    if (!response.ok) {
+      throw new Error("Failed to fetch country list.");
+    }
     const data = await response.json();
     const filtered = data
       .map((country) => ({
@@ -47,7 +62,7 @@ export const getAllCountryNames = async () => {
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
     return filtered;
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    throw new Error(error.message);
   }
 };

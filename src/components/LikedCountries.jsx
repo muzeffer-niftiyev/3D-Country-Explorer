@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
 import DataCard from "./DataCard";
+import { useSelector } from "react-redux";
 import LikedSearchbar from "./LikedSearchbar";
 
 const LikedCountries = () => {
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const likedCountries = useSelector((state) => state.liked.likedCountries);
   const sortedLikedCountries = [...likedCountries].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
-  const [selectedCountry, setSelectedCountry] = useState(null);
 
   return (
     <>

@@ -1,9 +1,9 @@
-import { createRoot } from "react-dom/client";
 import "./index.css";
-import { Provider } from "react-redux";
-import store from "./store/store.js";
-import { BrowserRouter } from "react-router-dom";
 import Router from "./Router.jsx";
+import store from "./store/store.js";
+import { Provider } from "react-redux";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>

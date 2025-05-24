@@ -1,16 +1,16 @@
-import LikeButton from "./LikeButton";
 import {
   formatArea,
   formatCurrency,
   formatPopulation,
 } from "../utils/formatters";
-import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import LikeButton from "./LikeButton";
+import { useEffect, useState } from "react";
 
 const DataCard = ({ countryData }) => {
   const [isImgError, setIsImgError] = useState(false);
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [hasImgLoaded, setHasImgLoaded] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
     const handleOnline = () => {
@@ -47,7 +47,7 @@ const DataCard = ({ countryData }) => {
           alt="flag"
           onLoad={() => setHasImgLoaded(true)}
           onError={() => setIsImgError(true)}
-          className="w-[240px] h-[130px] object-cover rounded-2xl border-4 border-neutral-800 dark:border-neutral-200 transition-all duration-600"
+          className="w-[230px] h-[140px] object-cover rounded-2xl border-4 border-neutral-800 dark:border-neutral-200 transition-all duration-600"
         />
       ) : (
         <div className="w-[200px] text-gray-500 dark:text-neutral-200 flex items-center justify-center text-md text-center px-2">

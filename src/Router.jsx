@@ -1,6 +1,6 @@
-import { Navigate, Route, Routes } from "react-router-dom";
 import App from "./App";
 import LikedCountries from "./components/LikedCountries";
+import { Navigate, Route, Routes } from "react-router-dom";
 import ExploreCountries from "./components/ExploreCountries";
 
 const Router = () => {

@@ -9,10 +9,6 @@ body {
   background-color: inherit;
 }
 
-.dropdown {
-  @apply h-12 bg-red-900;
-}
-
 ::-webkit-scrollbar {
   width: 8px;
 }

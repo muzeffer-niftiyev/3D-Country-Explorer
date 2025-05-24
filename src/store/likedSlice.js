@@ -17,6 +17,7 @@ const likedSlice = createSlice({
       state.likedCountries.push(action.payload);
       localStorage.setItem("liked", JSON.stringify(state.likedCountries));
     },
+    
     removeFromLiked: (state, action) => {
       state.likedCountries = state.likedCountries.filter(
         (country) => country.code !== action.payload

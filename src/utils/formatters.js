@@ -20,6 +20,5 @@ export const formatCurrency = (currency) => {
     code,
     symbol,
   }));
-
   return formatted;
 };

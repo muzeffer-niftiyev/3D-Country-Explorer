@@ -9,10 +9,7 @@ const ToastProvider = () => {
       position="bottom-right"
       reverseOrder={false}
       gutter={8}
-      containerClassName=""
-      containerStyle={{}}
       toastOptions={{
-        className: "",
         duration: 3000,
         removeDelay: 1000,
         style: {

@@ -1,54 +1,53 @@
-import { useDispatch, useSelector } from "react-redux";
+import {
+  getAllCountryNames,
+  getCountryDataFromCode,
+} from "../services/services";
 import {
   setFlyCoordinates,
   setIsLoading,
   setSelectedCountryData,
   toggleIsCountryChanged,
 } from "../store/countrySlice";
-import { useEffect, useMemo, useState } from "react";
-import {
-  getAllCountryNames,
-  getCountryDataFromCode,
-} from "../services/services";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import { selectStyle } from "../utils/miuStyle";
 import toast from "react-hot-toast";
+import { selectStyle } from "../utils/miuStyle";
+import TextField from "@mui/material/TextField";
+import { useEffect, useMemo, useState } from "react";
+import Autocomplete from "@mui/material/Autocomplete";
+import { useDispatch, useSelector } from "react-redux";
 
 const ExploreSearchbar = ({ regionFilter }) => {
-  const [allCountries, setAllCountries] = useState([]);
-  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
   const dispatch = useDispatch();
+  const [allCountries, setAllCountries] = useState([]);
+  const theme = useSelector((state) => state.theme.theme);
+  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
   const selectedCountry = useSelector(
     (state) => state.country.selectedCountryData
   );
-  const theme = useSelector((state) => state.theme.theme);
 
   const onChange = (value) => {
     const getCountryData = async () => {
       try {
         dispatch(setIsLoading(true));
         const data = await getCountryDataFromCode(value);
-        if (data) {
-          dispatch(setSelectedCountryData(data));
-          if (data.coordinates) {
-            dispatch(toggleIsCountryChanged());
-            dispatch(
-              setFlyCoordinates({
-                lat: data.coordinates[0],
-                lng: data.coordinates[1],
-              })
-            );
-          }
-        } else {
-          dispatch(setSelectedCountryData({}));
-          toast.error("Country data not found.");
+        dispatch(setSelectedCountryData(data));
+        
+        if (data.coordinates) {
+          dispatch(toggleIsCountryChanged());
+          dispatch(
+            setFlyCoordinates({
+              lat: data.coordinates[0],
+              lng: data.coordinates[1],
+            })
+          );
         }
-      } catch {
+      } catch (error) {
+        dispatch(setSelectedCountryData({}));
         if (!navigator.onLine) {
           toast.error("No internet connection. Please check your network.");
         } else {
-          toast.error("Failed to fetch country data. Please try again.");
+          toast.error(
+            error.message || "Failed to fetch country data. Please try again."
+          );
         }
       } finally {
         dispatch(setIsLoading(false));
@@ -68,20 +67,24 @@ const ExploreSearchbar = ({ regionFilter }) => {
 
   useEffect(() => {
     const fetchCountries = async () => {
-      const countries = await getAllCountryNames();
-      if (countries && countries.length) {
-        const formatted = countries.map((country) => ({
-          label: country.name,
-          value: {
-            code: country.code,
-            continents: country.continents,
-          },
-        }));
-        setAllCountries(formatted);
+      try {
+        const countries = await getAllCountryNames();
+        if (countries && countries.length) {
+          const formatted = countries.map((country) => ({
+            label: country.name,
+            value: {
+              code: country.code,
+              continents: country.continents,
+            },
+          }));
+          setAllCountries(formatted);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      } finally {
+        setIsCountriesLoading(false);
       }
-      setIsCountriesLoading(false);
     };
-
     fetchCountries();
   }, []);
 

@@ -1,16 +1,17 @@
+import Loader from "./Loader";
+import { useState } from "react";
 import DataCard from "./DataCard";
 import { useSelector } from "react-redux";
-import Loader from "./Loader";
-import ExploreSearchbar from "./ExploreSearchbar";
-import { useState } from "react";
-import { MenuItem, Select, FormControl } from "@mui/material";
 import { filterStyle } from "../utils/miuStyle";
+import ExploreSearchbar from "./ExploreSearchbar";
+import { MenuItem, Select, FormControl } from "@mui/material";
 
 const ExploreCountries = () => {
+  const theme = useSelector((state) => state.theme.theme);
+  const [regionFilter, setRegionFilter] = useState("All");
   const isDataLoading = useSelector((state) => state.country.isLoading);
   const countryData = useSelector((state) => state.country.selectedCountryData);
-  const [regionFilter, setRegionFilter] = useState("All");
-  const theme = useSelector((state) => state.theme.theme);
+
   return (
     <>
       <h1 className="font-medium text-xl mb-8 text-neutral-900 dark:text-[#eee]">
