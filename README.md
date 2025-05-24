@@ -1,10 +1,10 @@
-# 3D Country Explorer ⚛
+# 3D Country Explorer 🌍
 
 ---
 
 ## 📝 Description
 
-Welcome to the 3D Country Explorer! 🌍<br> 
+Welcome to the 3D Country Explorer!<br> 
 
 #### 💻 Technologies
 
