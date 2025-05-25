@@ -5,37 +5,44 @@ import {
 } from "../services/services";
 import * as THREE from "three";
 import toast from "react-hot-toast";
-import { TextureLoader } from "three";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoader, useThree } from "@react-three/fiber";
-import { useRef, useState, useMemo, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { Sphere, OrbitControls, Html } from "@react-three/drei";
 import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
+import vertexShader from "../shaders/vertex.glsl";
+import fragmentShader from "../shaders/fragment.glsl";
 
-const Earth = () => {
+const Earth = ({ earthMaterialRef }) => {
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.theme.theme);
   const navigate = useNavigate();
-  const [lightTexture, darkTexture] = useLoader(TextureLoader, [
-    "/lightTexture.jpg",
-    "/darkTexture.jpg",
-  ]);
-  const texture = useMemo(
-    () => (theme === "dark" ? darkTexture : lightTexture),
-    [theme, lightTexture, darkTexture]
-  );
   const isCountryChanged = useSelector(
     (state) => state.country.isCountryChanged
   );
   const earthRef = useRef();
+
   const controlsRef = useRef();
   const { camera, gl } = useThree();
   const [isDragging, setIsDragging] = useState(false);
   const [pinPosition, setPinPosition] = useState(null);
   const flyCoordinates = useSelector((state) => state.country.flyCoordinates);
+  const earthLightTexture = useLoader(
+    THREE.TextureLoader,
+    "./lightTexture.jpg"
+  );
+  earthLightTexture.colorSpace = THREE.SRGBColorSpace;
+  earthLightTexture.anisotropy = 8;
+  const earthDarkTexture = useLoader(THREE.TextureLoader, "./darkTexture.jpg");
+  earthDarkTexture.colorSpace = THREE.SRGBColorSpace;
+  earthDarkTexture.anisotropy = 8;
+  const earthSpecularTexture = useLoader(
+    THREE.TextureLoader,
+    "./specularTexture.jpg"
+  );
+  earthSpecularTexture.anisotropy = 8;
 
-  const getLatLngfromEarth = (vector) => {
+  const getLatLngFromEarth = (vector) => {
     const lat = 90 - (Math.acos(vector.y) * 180) / Math.PI;
     const lng = -(
       (((Math.atan2(vector.z, vector.x) * 180) / Math.PI + 180) % 360) -
@@ -85,7 +92,7 @@ const Earth = () => {
     const intersects = raycaster.intersectObject(earthRef.current, true);
     if (intersects.length > 0) {
       const point = intersects[0].point.clone().normalize().multiplyScalar(2.5);
-      const { lat, lng } = getLatLngfromEarth(point.clone().normalize());
+      const { lat, lng } = getLatLngFromEarth(point.clone().normalize());
       flyTo(lat, lng);
       setPinPosition(getVectorFromLatLng(lat, lng, 1));
       try {
@@ -118,6 +125,16 @@ const Earth = () => {
     }
   }, [isCountryChanged, flyCoordinates]);
 
+  const uniforms = useMemo(
+    () => ({
+      uLightTexture: new THREE.Uniform(earthLightTexture),
+      uDarkTexture: new THREE.Uniform(earthDarkTexture),
+      uSpecularTexture: new THREE.Uniform(earthSpecularTexture),
+      uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1)),
+    }),
+    []
+  );
+
   return (
     <>
       <color attach="background" args={["#0f0f16"]} />
@@ -126,8 +143,8 @@ const Earth = () => {
         enablePan={false}
         makeDefault
         rotateSpeed={0.4}
-        maxDistance={Math.PI * 1.5}
-        minDistance={Math.PI / 1.5}
+        // maxDistance={Math.PI * 1.5}
+        // minDistance={Math.PI / 1.5}
         enableDamping
         dampingFactor={0.1}
       />
@@ -142,18 +159,20 @@ const Earth = () => {
           if (!isDragging) handleEarthClick(event);
         }}
       >
-        <meshStandardMaterial
-          map={texture}
-          depthTest={true}
-          depthWrite={true}
-          opacity={1}
+        <shaderMaterial
+          attach="material"
+          ref={earthMaterialRef}
+          vertexShader={vertexShader}
+          fragmentShader={fragmentShader}
+          uniforms={uniforms}
         />
       </Sphere>
+
       {pinPosition && (
         <Html args={[0.01, 8, 8]} position={pinPosition} occlude={[earthRef]}>
           <button className="relative w-5 h-5 cursor-pointer transition-none">
-            <span className="absolute inset-0 rounded-full ring-2 ring-neutral-900 dark:ring-neutral-200 animate-ping" />
-            <div className="w-full h-full rounded-full bg-neutral-900 dark:bg-neutral-200 z-10 relative opacity-[.7]"></div>
+            <span className="absolute inset-0 rounded-full ring-2 ring-neutral-200 animate-ping" />
+            <div className="w-full h-full rounded-full bg-neutral-200 z-10 relative opacity-[.7]"></div>
           </button>
         </Html>
       )}

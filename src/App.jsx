@@ -4,11 +4,12 @@ import Loader from "./components/Loader";
 import Sidebar from "./components/Sidebar";
 import { Canvas } from "@react-three/fiber";
 import ThemeToggle from "./components/ThemeToggle";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import ToastProvider from "./components/ToastProvider";
-import PreloadTextures from "./components/PreloadTextures";
+import Sun from "./components/Sun";
 
 const App = () => {
+  const earthMaterialRef = useRef();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
@@ -54,8 +55,8 @@ const App = () => {
               </Html>
             }
           >
-            <PreloadTextures />
-            <Earth />
+            <Sun earthMaterialRef={earthMaterialRef} />
+            <Earth earthMaterialRef={earthMaterialRef} />
           </Suspense>
         </Canvas>
       </div>
