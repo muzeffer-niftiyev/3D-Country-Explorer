@@ -6,7 +6,7 @@ import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
 const Sun = ({ earthMaterialRef }) => {
   const sunRef = useRef();
   const { scene } = useThree();
-  const sunSpherical = new THREE.Spherical(1, Math.PI * 0.5, 0.5);
+  const sunSpherical = useRef(new THREE.Spherical(1, Math.PI * 0.5, 0.5));
   const sunDirection = new THREE.Vector3();
   const lensflare1 = useLoader(THREE.TextureLoader, "./lensflare1.png");
   lensflare1.colorSpace = THREE.SRGBColorSpace;
@@ -15,9 +15,9 @@ const Sun = ({ earthMaterialRef }) => {
 
   useFrame(() => {
     if (!sunRef.current) return;
-    sunDirection.setFromSpherical(sunSpherical);
+    sunDirection.setFromSpherical(sunSpherical.current);
     sunRef.current.position.copy(sunDirection).multiplyScalar(5);
-    sunSpherical.theta += 0.01;
+    sunSpherical.current.theta += 0.01;
     earthMaterialRef.current.uniforms.uSunDirection.value.copy(sunDirection);
   });
 
