@@ -1,12 +1,12 @@
+import Sun from "./components/Sun";
 import Earth from "./components/Earth";
 import { Html } from "@react-three/drei";
 import Loader from "./components/Loader";
 import Sidebar from "./components/Sidebar";
 import { Canvas } from "@react-three/fiber";
 import ThemeToggle from "./components/ThemeToggle";
-import { Suspense, useEffect, useRef, useState } from "react";
 import ToastProvider from "./components/ToastProvider";
-import Sun from "./components/Sun";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 const App = () => {
   const earthMaterialRef = useRef();
@@ -66,9 +66,3 @@ const App = () => {
 };
 
 export default App;
-
-
-// TODO 
-// 1) Sun Texture elave elemek *** 
-// 2) Earth shader atmosphere ucun shader deyisecek ****
-

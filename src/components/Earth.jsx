@@ -6,13 +6,13 @@ import {
 import * as THREE from "three";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import vertexShader from "../shaders/vertex.glsl";
+import fragmentShader from "../shaders/fragment.glsl";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoader, useThree } from "@react-three/fiber";
 import { useRef, useState, useEffect, useMemo } from "react";
 import { Sphere, OrbitControls, Html } from "@react-three/drei";
 import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
-import vertexShader from "../shaders/vertex.glsl";
-import fragmentShader from "../shaders/fragment.glsl";
 
 const Earth = ({ earthMaterialRef }) => {
   const dispatch = useDispatch();
