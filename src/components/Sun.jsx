@@ -13,7 +13,7 @@ const Sun = ({ earthMaterialRef }) => {
     if (!sunRef.current) return;
     sunDirection.setFromSpherical(sunSpherical);
     sunRef.current.position.copy(sunDirection).multiplyScalar(5);
-    sunSpherical.theta += 0.01;
+    sunSpherical.theta += 0.007;
     earthMaterialRef.current.uniforms.uSunDirection.value.copy(sunDirection);
   });
 

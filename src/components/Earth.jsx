@@ -131,6 +131,8 @@ const Earth = ({ earthMaterialRef }) => {
       uDarkTexture: new THREE.Uniform(earthDarkTexture),
       uSpecularTexture: new THREE.Uniform(earthSpecularTexture),
       uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1)),
+      uAtmosphereLightColor: new THREE.Uniform(new THREE.Color("#0a96db")),
+      uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color("#bd5611")),
     }),
     []
   );
@@ -139,14 +141,14 @@ const Earth = ({ earthMaterialRef }) => {
     <>
       <color attach="background" args={["#0f0f16"]} />
       <OrbitControls
+        makeDefault
         ref={controlsRef}
         enablePan={false}
-        makeDefault
-        rotateSpeed={0.4}
-        // maxDistance={Math.PI * 1.5}
-        // minDistance={Math.PI / 1.5}
+        rotateSpeed={0.5}
         enableDamping
         dampingFactor={0.1}
+        minDistance={Math.PI / 1.5}
+        maxDistance={Math.PI * 1.5}
       />
       <ambientLight intensity={2.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} />

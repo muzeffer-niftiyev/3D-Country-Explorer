@@ -66,3 +66,9 @@ const App = () => {
 };
 
 export default App;
+
+
+// TODO 
+// 1) Sun Texture elave elemek *** 
+// 2) Earth shader atmosphere ucun shader deyisecek ****
+
