@@ -33,7 +33,7 @@ Welcome to the 3D Country Explorer!<br>
 
 ## 🚀 Demo
 
-[🔗 3D Earth Explorer](https://3-d-country-explorer.vercel.app)
+[🔗 3D Country Explorer](https://3-d-country-explorer.vercel.app)
 
 ---
 
@@ -60,3 +60,19 @@ git clone git@github.com:muzeffer-niftiyev/3D-Country-Explorer.git
 ```bash
    npm run dev
 ```
+
+The app uses the REST Countries v5 API. For production or higher request limits,
+copy `.env.example` to `.env.local` for local development, then add an API key
+with the app's hostname configured as an allowed browser origin:
+
+```env
+VITE_REST_COUNTRIES_API_KEY=your_api_key
+```
+
+For Vercel, open the project **Settings > Environment Variables**, add
+`VITE_REST_COUNTRIES_API_KEY`, and set its value to your REST Countries API key
+for the environments you use. Redeploy after changing it because Vite injects
+`VITE_*` variables during the build.
+
+This is a browser-side key, so it cannot be kept secret in this frontend. Restrict
+it to the Vercel deployment hostname in the REST Countries API key settings.
