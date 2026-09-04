@@ -4,6 +4,13 @@ const fetchRestCountries = async (path = "", params = {}) => {
   const searchParams = new URLSearchParams(params);
   const query = searchParams.toString();
   const response = await fetch(`${REST_COUNTRIES_API_URL}${path}${query ? `?${query}` : ""}`);
+  const contentType = response.headers.get("content-type") || "";
+
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      "The country API proxy returned a non-JSON response. Redeploy the Vercel API function.",
+    );
+  }
 
   const result = await response.json();
   if (!response.ok) {
