@@ -1,14 +1,20 @@
-const REST_COUNTRIES_API_URL = "/api/countries";
+const REST_COUNTRIES_API_URL = import.meta.env.PROD
+  ? "https://api.restcountries.com/countries/v5"
+  : "/api/countries";
 
 const fetchRestCountries = async (path = "", params = {}) => {
   const searchParams = new URLSearchParams(params);
   const query = searchParams.toString();
-  const response = await fetch(`${REST_COUNTRIES_API_URL}${path}${query ? `?${query}` : ""}`);
+  const response = await fetch(`${REST_COUNTRIES_API_URL}${path}${query ? `?${query}` : ""}`, {
+    headers: import.meta.env.PROD
+      ? { Authorization: `Bearer ${import.meta.env.VITE_REST_COUNTRIES_API_KEY}` }
+      : undefined,
+  });
   const contentType = response.headers.get("content-type") || "";
 
   if (!contentType.includes("application/json")) {
     throw new Error(
-      "The country API proxy returned a non-JSON response. Redeploy the Vercel API function.",
+      "The country API returned a non-JSON response. Check the REST Countries API configuration.",
     );
   }
 
