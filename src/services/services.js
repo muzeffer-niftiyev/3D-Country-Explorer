@@ -1,13 +1,18 @@
 const REST_COUNTRIES_API_URL = import.meta.env.PROD
   ? "https://api.restcountries.com/countries/v5"
   : "/api/countries";
+const REST_COUNTRIES_API_KEY = import.meta.env.REST_COUNTRIES_API_KEY;
 
 const fetchRestCountries = async (path = "", params = {}) => {
+  if (import.meta.env.PROD && !REST_COUNTRIES_API_KEY) {
+    throw new Error("REST_COUNTRIES_API_KEY is not configured for this deployment.");
+  }
+
   const searchParams = new URLSearchParams(params);
   const query = searchParams.toString();
   const response = await fetch(`${REST_COUNTRIES_API_URL}${path}${query ? `?${query}` : ""}`, {
     headers: import.meta.env.PROD
-      ? { Authorization: `Bearer ${import.meta.env.VITE_REST_COUNTRIES_API_KEY}` }
+      ? { Authorization: `Bearer ${REST_COUNTRIES_API_KEY}` }
       : undefined,
   });
   const contentType = response.headers.get("content-type") || "";
