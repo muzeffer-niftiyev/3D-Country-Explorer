@@ -1,36 +1,35 @@
-# 3D Country Explorer 🌍
+# 3D Country Explorer
 
----
+Explore the world through an interactive 3D globe. Select a country from the explorer, click directly on the Earth, and discover useful country details in a focused, visual interface.
 
-## 📝 Description
+<p align="center">
+	<a href="https://3-d-country-explorer.vercel.app">
+		<img src="public/app-preview.png" alt="3D Country Explorer showing the interactive globe and country details" width="100%">
+	</a>
+</p>
 
-Welcome to the 3D Country Explorer!<br>
+<p align="center">
+	<a href="https://3-d-country-explorer.vercel.app"><strong>Open the live demo</strong></a>
+</p>
 
-#### 💻 Technologies
+## Highlights
 
-- React
-- React Three Fiber
-- React Router DOM
-- Redux Toolkit
-- Drei
-- GLSL
-- GSAP
-- Tailwind CSS
-- Material UI
-- React Hot Toast
+- Rotate and explore a textured 3D Earth powered by React Three Fiber.
+- Select countries from the searchable country list or by clicking the globe.
+- View a country’s flag, capital, continent, population, area, languages, and currency.
+- Save favorite countries locally and revisit them from the Liked view.
+- Switch between light and dark globe textures for a different way to explore.
 
----
+## Built With
 
-## ✨ Features
+| Area                | Technology                                     |
+| ------------------- | ---------------------------------------------- |
+| UI                  | React, React Router, Material UI, Tailwind CSS |
+| 3D experience       | React Three Fiber, Drei, Three.js, GLSL        |
+| State               | Redux Toolkit                                  |
+| Motion and feedback | GSAP, React Hot Toast                          |
+| Data                | REST Countries API                             |
 
-- Explore countries in a unique way using a fully rotatable and clickable 3D Earth powered by React Three Fiber.
-- Select a country either from the sidebar or directly by clicking on it on the 3D Earth — both instantly fetch and display country details.
-- View key information about any country, including its capital, population, area, flag and more.
-- Mark countries as liked with a simple like button. All liked countries are stored locally, so their data remains available offline.
-- Easily revisit and view information about your liked countries from the dedicated "Liked" section — no internet needed.
+## Live Demo
 
----
-
-## 🚀 Demo
-
-[🔗 3D Country Explorer](https://3-d-country-explorer.vercel.app)
+[3D Country Explorer](https://3-d-country-explorer.vercel.app)
