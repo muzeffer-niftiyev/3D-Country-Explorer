@@ -1,7 +1,7 @@
 const REST_COUNTRIES_API_URL = import.meta.env.PROD
   ? "https://api.restcountries.com/countries/v5"
   : "/api/countries";
-const REST_COUNTRIES_API_KEY = import.meta.env.REST_COUNTRIES_API_KEY;
+const REST_COUNTRIES_API_KEY = import.meta.env.VITE_REST_COUNTRIES_API_KEY;
 
 const fetchRestCountries = async (path = "", params = {}) => {
   if (import.meta.env.PROD && !REST_COUNTRIES_API_KEY) {
