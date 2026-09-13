@@ -4,7 +4,7 @@ Explore the world through an interactive 3D globe. Select a country from the exp
 
 <p align="center">
 	<a href="https://3-d-country-explorer.vercel.app">
-		<img src="public/app-preview.png" alt="3D Country Explorer showing the interactive globe and country details" width="100%">
+		<img src="public/preview.png" alt="3D Country Explorer showing the interactive globe and country details" width="100%">
 	</a>
 </p>
 
