@@ -29,7 +29,3 @@ Explore the world through an interactive 3D globe. Select a country from the exp
 | State               | Redux Toolkit                                  |
 | Motion and feedback | GSAP, React Hot Toast                          |
 | Data                | REST Countries API                             |
-
-## Live Demo
-
-[3D Country Explorer](https://3-d-country-explorer.vercel.app)
