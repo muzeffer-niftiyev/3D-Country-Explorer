@@ -5,6 +5,9 @@ const initialState = {
   isLoading: false,
   isCountryChanged: false,
   flyCoordinates: [],
+  highlightedCode: null,
+  allCountries: [],
+  isCountryListLoading: true,
 };
 
 export const countrySlice = createSlice({
@@ -13,6 +16,7 @@ export const countrySlice = createSlice({
   reducers: {
     setSelectedCountryData: (state, action) => {
       state.selectedCountryData = action.payload;
+      state.highlightedCode = action.payload?.code ?? null;
     },
 
     setIsLoading: (state, action) => {
@@ -26,6 +30,19 @@ export const countrySlice = createSlice({
     setFlyCoordinates: (state, action) => {
       state.flyCoordinates = action.payload;
     },
+
+    setHighlightedCode: (state, action) => {
+      state.highlightedCode = action.payload;
+    },
+
+    setAllCountries: (state, action) => {
+      state.allCountries = action.payload;
+      state.isCountryListLoading = false;
+    },
+
+    setCountryListFailed: (state) => {
+      state.isCountryListLoading = false;
+    },
   },
 });
 
@@ -34,5 +51,8 @@ export const {
   setFlyCoordinates,
   setSelectedCountryData,
   toggleIsCountryChanged,
+  setHighlightedCode,
+  setAllCountries,
+  setCountryListFailed,
 } = countrySlice.actions;
 export default countrySlice.reducer;

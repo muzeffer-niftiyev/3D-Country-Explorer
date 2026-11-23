@@ -1,22 +1,24 @@
 import gsap from "gsap";
-import {
-  getCountryCodeFromEarth,
-  getCountryDataFromCode,
-} from "../services/services";
 import * as THREE from "three";
-import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
 import vertexShader from "../shaders/vertex.glsl";
 import fragmentShader from "../shaders/fragment.glsl";
 import { useDispatch, useSelector } from "react-redux";
-import { useLoader, useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getCountryCodeFromEarth } from "../services/services";
+import { useEarthTextures } from "../hooks/useEarthTextures";
 import { useRef, useState, useEffect, useMemo } from "react";
-import { Sphere, OrbitControls, Html } from "@react-three/drei";
+import { useCountryHighlight } from "../hooks/useCountryHighlight";
+import { Sphere, OrbitControls, Html, Line } from "@react-three/drei";
 import { setIsLoading, setSelectedCountryData } from "../store/countrySlice";
+import { showFetchError, useSelectCountry } from "../hooks/useCountrySelection";
 
-const Earth = ({ earthMaterialRef }) => {
+const Earth = ({ earthMaterialRef, onFirstFrame }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectCountry = useSelectCountry();
+  const highlightedCode = useSelector((state) => state.country.highlightedCode);
   const isCountryChanged = useSelector(
     (state) => state.country.isCountryChanged
   );
@@ -24,23 +26,22 @@ const Earth = ({ earthMaterialRef }) => {
 
   const controlsRef = useRef();
   const { camera, gl } = useThree();
-  const [isDragging, setIsDragging] = useState(false);
+  const pointerDownPos = useRef(null);
+  const TAP_THRESHOLD_PX = 8;
   const [pinPosition, setPinPosition] = useState(null);
   const flyCoordinates = useSelector((state) => state.country.flyCoordinates);
-  const earthLightTexture = useLoader(
-    THREE.TextureLoader,
-    "./lightTexture.jpg"
-  );
-  earthLightTexture.colorSpace = THREE.SRGBColorSpace;
-  earthLightTexture.anisotropy = 8;
-  const earthDarkTexture = useLoader(THREE.TextureLoader, "./darkTexture.jpg");
-  earthDarkTexture.colorSpace = THREE.SRGBColorSpace;
-  earthDarkTexture.anisotropy = 8;
-  const earthSpecularTexture = useLoader(
-    THREE.TextureLoader,
-    "./specularTexture.jpg"
-  );
-  earthSpecularTexture.anisotropy = 8;
+  const {
+    day: earthLightTexture,
+    night: earthDarkTexture,
+    specular: earthSpecularTexture,
+  } = useEarthTextures();
+
+  const hasRenderedRef = useRef(false);
+  useFrame(() => {
+    if (hasRenderedRef.current) return;
+    hasRenderedRef.current = true;
+    requestAnimationFrame(() => onFirstFrame?.());
+  });
 
   const getLatLngFromEarth = (vector) => {
     const lat = 90 - (Math.acos(vector.y) * 180) / Math.PI;
@@ -81,7 +82,7 @@ const Earth = ({ earthMaterialRef }) => {
   };
 
   const handleEarthClick = async (event) => {
-    navigate("country-details");
+    if (location.pathname.startsWith("/quiz")) return;
     const mouse = new THREE.Vector2();
     const rect = gl.domElement.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -95,21 +96,18 @@ const Earth = ({ earthMaterialRef }) => {
       const { lat, lng } = getLatLngFromEarth(point.clone().normalize());
       flyTo(lat, lng);
       setPinPosition(getVectorFromLatLng(lat, lng, 1));
+      dispatch(setIsLoading(true));
+      let countryCode;
       try {
-        dispatch(setIsLoading(true));
-        const countryCode = await getCountryCodeFromEarth(lat, lng);
-        const countryData = await getCountryDataFromCode(countryCode);
-        dispatch(setSelectedCountryData(countryData));
+        countryCode = await getCountryCodeFromEarth(lat, lng);
       } catch (error) {
-        if (!navigator.onLine) {
-          toast.error("No internet connection. Please check your network.");
-        } else {
-          toast.error(error.message);
-        }
+        showFetchError(error, "Couldn't find a country there.");
         dispatch(setSelectedCountryData({}));
-      } finally {
         dispatch(setIsLoading(false));
+        navigate("/country-details");
+        return;
       }
+      await selectCountry(countryCode, { fly: false });
     }
   };
 
@@ -133,9 +131,24 @@ const Earth = ({ earthMaterialRef }) => {
       uSunDirection: new THREE.Uniform(new THREE.Vector3(0, 0, 1)),
       uAtmosphereLightColor: new THREE.Uniform(new THREE.Color("#0a96db")),
       uAtmosphereTwilightColor: new THREE.Uniform(new THREE.Color("#bd5611")),
+      uHighlightTexture: new THREE.Uniform(null),
+      uHighlightStrength: new THREE.Uniform(0),
+      uHighlightColor: new THREE.Uniform(new THREE.Color("#ffc45c")),
     }),
     []
   );
+
+  const outline = useCountryHighlight(highlightedCode, uniforms);
+  const outlineRef = useRef();
+  useEffect(() => {
+    const material = outlineRef.current?.material;
+    if (!material) return;
+    gsap.fromTo(
+      material,
+      { opacity: 0 },
+      { opacity: 0.95, duration: 0.8, ease: "power2.out" }
+    );
+  }, [outline]);
 
   return (
     <>
@@ -153,12 +166,20 @@ const Earth = ({ earthMaterialRef }) => {
       <ambientLight intensity={2.5} />
       <directionalLight position={[10, 10, 10]} intensity={1} />
       <Sphere
-        args={[1, 32, 32]}
+        args={[1, 128, 64]}
         ref={earthRef}
-        onPointerDown={() => setIsDragging(false)}
-        onPointerMove={() => setIsDragging(true)}
+        onPointerDown={(event) => {
+          pointerDownPos.current = { x: event.clientX, y: event.clientY };
+        }}
         onPointerUp={(event) => {
-          if (!isDragging) handleEarthClick(event);
+          const start = pointerDownPos.current;
+          pointerDownPos.current = null;
+          if (!start) return;
+          const moved = Math.hypot(
+            event.clientX - start.x,
+            event.clientY - start.y
+          );
+          if (moved < TAP_THRESHOLD_PX) handleEarthClick(event);
         }}
       >
         <shaderMaterial
@@ -170,9 +191,25 @@ const Earth = ({ earthMaterialRef }) => {
         />
       </Sphere>
 
+      {outline && outline.length > 0 && (
+        <Line
+          ref={outlineRef}
+          points={outline}
+          segments
+          color="#ffe2a8"
+          lineWidth={1.6}
+          transparent
+          opacity={0}
+        />
+      )}
+
       {pinPosition && (
         <Html args={[0.01, 8, 8]} position={pinPosition} occlude={[earthRef]}>
-          <button className="relative w-5 h-5 cursor-pointer transition-none">
+          <button
+            className="relative w-5 h-5 cursor-pointer transition-none"
+            aria-hidden="true"
+            tabIndex={-1}
+          >
             <span className="absolute inset-0 rounded-full ring-2 ring-neutral-200 animate-ping" />
             <div className="w-full h-full rounded-full bg-neutral-200 z-10 relative opacity-[.7]"></div>
           </button>

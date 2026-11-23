@@ -3,6 +3,7 @@ import {
   formatCurrency,
   formatPopulation,
 } from "../utils/formatters";
+import Flag from "./Flag";
 import toast from "react-hot-toast";
 import LikeButton from "./LikeButton";
 import { useEffect, useState } from "react";
@@ -39,15 +40,15 @@ const DataCard = ({ countryData }) => {
   if (!countryData || Object.keys(countryData).length === 0) return null;
 
   return (
-    <div className="bg-amber-50 dark:bg-[#1d1d20] my-6 w-full overflow-y-auto overflow-x-hidden flex items-center flex-col p-5 rounded-md relative text-neutral-900 dark:text-neutral-200 transition-all duration-600">
+    <div className="bg-amber-50 dark:bg-[#1d1d20] my-6 w-full shrink-0 overflow-x-hidden flex items-center flex-col p-5 rounded-md relative text-neutral-900 dark:text-neutral-200 transition-all duration-600">
       <LikeButton countryData={countryData} />
       {showImg ? (
-        <img
+        <Flag
           src={countryData.flagUrl}
-          alt="flag"
+          code={countryData.code}
+          alt={`Flag of ${countryData.name}`}
           onLoad={() => setHasImgLoaded(true)}
           onError={() => setIsImgError(true)}
-          className="w-[230px] h-[140px] object-cover rounded-2xl border-4 border-neutral-800 dark:border-neutral-200 transition-all duration-600"
         />
       ) : (
         <div className="w-[200px] text-gray-500 dark:text-neutral-200 flex items-center justify-center text-md text-center px-2">
@@ -93,8 +94,9 @@ const DataCard = ({ countryData }) => {
         <div className="flex gap-2 items-center w-full">
           <p className="font-semibold text-md">Currency: </p>
           {formatCurrency(countryData.currencies).map((currency) => (
-            <p key={currency.name} className="font-bold text-lg">
-              {currency.code} ({currency.symbol})
+            <p key={currency.code} className="font-bold text-lg">
+              {currency.code}
+              {currency.symbol ? ` (${currency.symbol})` : ""}
             </p>
           ))}
         </div>

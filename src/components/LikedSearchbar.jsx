@@ -1,5 +1,6 @@
 import {
   setFlyCoordinates,
+  setHighlightedCode,
   toggleIsCountryChanged,
 } from "../store/countrySlice";
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ const LikedSearchbar = ({
     );
     if (selected) {
       setSelectedCountry(selected);
+      dispatch(setHighlightedCode(selected.code));
       dispatch(toggleIsCountryChanged());
       dispatch(
         setFlyCoordinates({
@@ -71,7 +73,7 @@ const LikedSearchbar = ({
           sx={selectStyle(theme)}
         />
       )}
-      sx={{ width: "70%" }}
+      className="w-full sm:w-[70%]"
       componentsProps={{
         paper: {
           sx: {

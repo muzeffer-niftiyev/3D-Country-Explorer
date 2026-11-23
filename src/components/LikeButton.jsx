@@ -22,8 +22,14 @@ const LikeButton = ({ countryData }) => {
 
   return (
     <button
-      className="absolute right-3 cursor-pointer hover:scale-105 hover-opacity-90 transition-all duration-200"
+      className="absolute right-3 cursor-pointer hover:scale-105 hover:opacity-90 transition-all duration-200"
       onClick={handleClick}
+      aria-label={
+        isLiked
+          ? `Remove ${countryData.name} from liked countries`
+          : `Add ${countryData.name} to liked countries`
+      }
+      aria-pressed={isLiked}
     >
       <Heart
         size={30}

@@ -1,113 +1,36 @@
-import {
-  getAllCountryNames,
-  getCountryDataFromCode,
-} from "../services/services";
-import {
-  setFlyCoordinates,
-  setIsLoading,
-  setSelectedCountryData,
-  toggleIsCountryChanged,
-} from "../store/countrySlice";
-import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 import { selectStyle } from "../utils/miuStyle";
 import TextField from "@mui/material/TextField";
-import { useEffect, useMemo, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelectCountry } from "../hooks/useCountrySelection";
 
-const ExploreSearchbar = ({ regionFilter }) => {
-  const dispatch = useDispatch();
-  const [allCountries, setAllCountries] = useState([]);
+const ExploreSearchbar = ({ countries, isLoading }) => {
+  const selectCountry = useSelectCountry();
   const theme = useSelector((state) => state.theme.theme);
-  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
   const selectedCountry = useSelector(
     (state) => state.country.selectedCountryData
   );
 
-  const onChange = (value) => {
-    const getCountryData = async () => {
-      try {
-        dispatch(setIsLoading(true));
-        const data = await getCountryDataFromCode(value);
-        dispatch(setSelectedCountryData(data));
-        
-        if (data.coordinates) {
-          dispatch(toggleIsCountryChanged());
-          dispatch(
-            setFlyCoordinates({
-              lat: data.coordinates[0],
-              lng: data.coordinates[1],
-            })
-          );
-        }
-      } catch (error) {
-        dispatch(setSelectedCountryData({}));
-        if (!navigator.onLine) {
-          toast.error("No internet connection. Please check your network.");
-        } else {
-          toast.error(
-            error.message || "Failed to fetch country data. Please try again."
-          );
-        }
-      } finally {
-        dispatch(setIsLoading(false));
-      }
-    };
-    getCountryData();
-  };
-
-  const filteredCountries = useMemo(() => {
-    if (regionFilter === "All") return allCountries;
-    return allCountries.filter((country) =>
-      country.value.continents?.some((continent) =>
-        continent.toLowerCase().includes(regionFilter.toLowerCase())
-      )
-    );
-  }, [regionFilter, allCountries]);
-
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const countries = await getAllCountryNames();
-        if (countries && countries.length) {
-          const formatted = countries.map((country) => ({
-            label: country.name,
-            value: {
-              code: country.code,
-              continents: country.continents,
-            },
-          }));
-          setAllCountries(formatted);
-        }
-      } catch (error) {
-        toast.error(error.message);
-      } finally {
-        setIsCountriesLoading(false);
-      }
-    };
-    fetchCountries();
-  }, []);
-
   return (
     <Autocomplete
       disablePortal
-      className="w-[65%]"
-      options={filteredCountries}
-      loading={isCountriesLoading}
-      getOptionLabel={(option) => option.label}
-      groupBy={(option) => option.label[0].toUpperCase()}
-      isOptionEqualToValue={(option, value) => option.value === value.value}
+      className="flex-1 min-w-0"
+      options={countries}
+      loading={isLoading}
+      getOptionLabel={(option) => option.name}
+      groupBy={(option) => option.name[0].toUpperCase()}
+      isOptionEqualToValue={(option, value) => option.code === value.code}
       value={
         selectedCountry?.name && selectedCountry?.code
-          ? { label: selectedCountry.name, value: selectedCountry.code }
+          ? { name: selectedCountry.name, code: selectedCountry.code }
           : null
       }
       onChange={(_, newValue) => {
-        if (newValue) onChange(newValue.value.code);
+        if (newValue) selectCountry(newValue.code);
       }}
       filterOptions={(options, { inputValue }) =>
         options.filter((option) =>
-          option.label.toLowerCase().includes(inputValue.toLowerCase())
+          option.name.toLowerCase().includes(inputValue.toLowerCase())
         )
       }
       renderInput={(params) => (

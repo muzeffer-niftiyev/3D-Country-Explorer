@@ -8,9 +8,9 @@ const Sun = ({ earthMaterialRef }) => {
   const { scene } = useThree();
   const sunSpherical = useRef(new THREE.Spherical(1, Math.PI * 0.5, 0.5));
   const sunDirection = new THREE.Vector3();
-  const lensflare1 = useLoader(THREE.TextureLoader, "./lensflare1.png");
+  const lensflare1 = useLoader(THREE.TextureLoader, "/lensflare1.png");
   lensflare1.colorSpace = THREE.SRGBColorSpace;
-  const lensflare2 = useLoader(THREE.TextureLoader, "./lensflare2.png");
+  const lensflare2 = useLoader(THREE.TextureLoader, "/lensflare2.png");
   lensflare2.colorSpace = THREE.SRGBColorSpace;
 
   useFrame(() => {

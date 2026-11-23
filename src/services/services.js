@@ -1,3 +1,5 @@
+import { toSlug } from "../utils/slug";
+
 const REST_COUNTRIES_API_URL = import.meta.env.PROD
   ? "https://api.restcountries.com/countries/v5"
   : "/api/countries";
@@ -94,7 +96,8 @@ export const getAllCountryNames = async () => {
       const data = await fetchRestCountries("", {
         limit: 100,
         offset,
-        response_fields: "names.common,codes.alpha_2,continents",
+        response_fields:
+          "names.common,codes.alpha_2,continents,flag.url_svg,coordinates",
       });
       countries.push(...(data?.objects || []));
       hasMore = data?.meta?.more === true;
@@ -105,7 +108,12 @@ export const getAllCountryNames = async () => {
       .map((country) => ({
         name: country.names.common,
         code: country.codes.alpha_2,
-        continents: country.continents,
+        slug: toSlug(country.names.common),
+        continents: country.continents || [],
+        flagUrl: country.flag?.url_svg,
+        coordinates: country.coordinates
+          ? [country.coordinates.lat, country.coordinates.lng]
+          : [],
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
   } catch (error) {

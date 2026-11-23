@@ -1,24 +1,31 @@
-export const formatPopulation = (population) => {
-  if (population >= 1000000000) {
-    return (population / 1000000000).toFixed(2) + " Billion";
-  } else if (population >= 1000000) {
-    return (population / 1000000).toFixed(2) + " Million";
+const numberFormat = new Intl.NumberFormat("en-US");
+const compactFormat = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+
+const formatLargeNumber = (value) => {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) {
+    return null;
   }
-  return population;
+  if (value >= 1_000_000_000) {
+    return compactFormat.format(value / 1_000_000_000) + " Billion";
+  }
+  if (value >= 1_000_000) {
+    return compactFormat.format(value / 1_000_000) + " Million";
+  }
+  return numberFormat.format(value);
 };
+
+export const formatPopulation = (population) =>
+  formatLargeNumber(population) ?? "N/A";
 
 export const formatArea = (area) => {
-  if (area >= 1000000) {
-    return (area / 1000000).toFixed(2) + " Million km²";
-  }
-  return area + " km²";
+  const formatted = formatLargeNumber(area);
+  return formatted ? `${formatted} km²` : "N/A";
 };
 
-export const formatCurrency = (currency) => {
-  const currencyEntry = Object.entries(currency);
-  const formatted = currencyEntry.map(([code, { symbol }]) => ({
+export const formatCurrency = (currency = {}) =>
+  Object.entries(currency).map(([code, { symbol }]) => ({
     code,
     symbol,
   }));
-  return formatted;
-};

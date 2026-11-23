@@ -1,7 +1,12 @@
 const Loader = ({ color }) => {
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div
+      className="w-full h-full flex justify-center items-center"
+      role="status"
+      aria-label="Loading"
+    >
       <svg
+        aria-hidden="true"
         className={`h-10 w-10 animate-spin ${
           color || "text-neutral-900 dark:text-[#eee]"
         }`}

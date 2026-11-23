@@ -4,6 +4,9 @@ uniform sampler2D uSpecularTexture;
 uniform vec3 uSunDirection;
 uniform vec3 uAtmosphereLightColor;
 uniform vec3 uAtmosphereTwilightColor;
+uniform sampler2D uHighlightTexture;
+uniform float uHighlightStrength;
+uniform vec3 uHighlightColor;
 
 varying vec2 vUv;
 varying vec3 vNormal;
@@ -20,6 +23,11 @@ void main() {
     vec3 lightColor = texture(uLightTexture, vUv).rgb;
     vec3 darkColor = texture(uDarkTexture, vUv).rgb;
     color = mix(darkColor, lightColor, lightMix);
+
+    float highlight = texture(uHighlightTexture, vUv).r * uHighlightStrength;
+    vec3 dayTint = mix(color, uHighlightColor, 0.26);
+    vec3 nightTint = color + uHighlightColor * 0.09;
+    color = mix(color, mix(nightTint, dayTint, lightMix), highlight);
 
     vec2 specularCloudsColor = texture(uSpecularTexture, vUv).rg;
 
