@@ -135,7 +135,7 @@ const FlagQuiz = () => {
   );
 
   useEffect(() => {
-    if (pickedCode) nextButtonRef.current?.focus();
+    if (pickedCode) nextButtonRef.current?.focus({ preventScroll: true });
   }, [pickedCode]);
 
   useEffect(() => {
@@ -196,13 +196,13 @@ const FlagQuiz = () => {
 
   return (
     <>
-      <h1 className="w-full font-medium text-base lg:text-xl mb-4 lg:mb-8 text-neutral-900 dark:text-[#eee] transition-colors duration-600">
+      <h1 className="hidden lg:block w-full font-medium text-xl mb-8 text-neutral-900 dark:text-[#eee] transition-colors duration-600">
         Put your geography to the test with the{" "}
         <span className="font-bold">Flag Quiz</span>! Pick the country each
         flag belongs to.
       </h1>
 
-      <div className="grid grid-cols-3 gap-3 sm:gap-4 w-full">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4 w-full shrink-0">
         <QuizStat
           icon={<Target size={13} className="text-sky-600 dark:text-sky-400" />}
           label="Score"
@@ -223,41 +223,45 @@ const FlagQuiz = () => {
         </QuizStat>
       </div>
 
-      <div className="bg-amber-50 dark:bg-[#1d1d20] my-6 w-full shrink-0 flex flex-col items-center p-5 rounded-md text-neutral-900 dark:text-neutral-200 transition-all duration-600">
+      <div className="bg-amber-50 dark:bg-[#1d1d20] mt-3 lg:my-6 w-full shrink-0 flex flex-col items-center p-3 lg:p-5 rounded-md text-neutral-900 dark:text-neutral-200 transition-all duration-600">
         <Flag
           key={question.answer.code}
           src={question.answer.flagUrl}
           code={question.answer.code}
           alt="Mystery flag"
+          className="h-20 lg:h-[140px] w-full"
+          imgClassName="max-w-[min(200px,100%)] lg:max-w-[min(260px,calc(100%_-_4.5rem))]"
         />
-        <h3 className="mt-3 uppercase text-xl font-bold text-center transition-all duration-600">
+        <h3 className="hidden lg:block mt-3 uppercase text-xl font-bold text-center transition-all duration-600">
           Guess the country
         </h3>
 
-        <ul className="mt-5 w-full grid gap-2.5">
+        <ul className="mt-3 lg:mt-5 w-full grid grid-cols-2 lg:grid-cols-1 gap-2 lg:gap-2.5">
           {question.options.map((option, i) => {
             const state = optionState(option.code);
             return (
-              <li key={option.code}>
+              <li key={option.code} className="flex">
                 <button
                   type="button"
                   disabled={!!pickedCode}
                   onClick={() => answer(option.code)}
-                  className={`w-full flex items-center gap-3 rounded-lg border-2 px-3 py-2.5 text-left font-semibold text-lg transition-all duration-200 ${optionClass[state]}`}
+                  className={`w-full min-h-[52px] lg:min-h-0 flex items-center gap-2 lg:gap-3 rounded-lg border-2 px-2 py-1.5 lg:px-3 lg:py-2.5 text-left font-semibold text-sm lg:text-lg leading-tight transition-all duration-200 ${optionClass[state]}`}
                 >
                   <span
                     aria-hidden="true"
-                    className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors duration-200 ${badgeClass[state]}`}
+                    className={`shrink-0 w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold transition-colors duration-200 ${badgeClass[state]}`}
                   >
                     {state === "correct" ? (
-                      <Check size={18} strokeWidth={3} />
+                      <Check size={16} strokeWidth={3} />
                     ) : state === "wrong" ? (
-                      <X size={18} strokeWidth={3} />
+                      <X size={16} strokeWidth={3} />
                     ) : (
                       i + 1
                     )}
                   </span>
-                  <span className="flex-1">{option.name}</span>
+                  <span className="flex-1 min-w-0 break-words">
+                    {option.name}
+                  </span>
                   {state === "correct" && (
                     <span className="sr-only">(correct answer)</span>
                   )}
@@ -270,47 +274,53 @@ const FlagQuiz = () => {
           })}
         </ul>
 
-        {pickedCode && (
-          <div className="mt-5 w-full flex flex-wrap items-center justify-between gap-3">
-            <p
-              role="status"
-              className={`font-semibold text-lg ${
-                isCorrect
-                  ? "text-emerald-700 dark:text-emerald-400"
-                  : "text-rose-700 dark:text-rose-400"
-              }`}
-            >
-              {isCorrect ? (
-                streak > 1 ? (
-                  `Correct! ${streak} in a row.`
-                ) : (
-                  "Correct!"
-                )
+        <div
+          aria-hidden={!pickedCode}
+          className={`mt-3 lg:mt-5 w-full flex items-center justify-between gap-3 ${
+            pickedCode ? "" : "invisible"
+          }`}
+        >
+          <p
+            role="status"
+            className={`min-w-0 font-semibold text-sm lg:text-lg leading-tight ${
+              isCorrect
+                ? "text-emerald-700 dark:text-emerald-400"
+                : "text-rose-700 dark:text-rose-400"
+            }`}
+          >
+            {!pickedCode ? (
+              " "
+            ) : isCorrect ? (
+              streak > 1 ? (
+                `Correct! ${streak} in a row.`
               ) : (
-                <>
-                  Not quite, it's{" "}
-                  <span className="font-bold">{question.answer.name}</span>.
-                </>
-              )}
-            </p>
-            <button
-              ref={nextButtonRef}
-              type="button"
-              onClick={goToNextQuestion}
-              className="ml-auto flex items-center gap-2 rounded-lg border-2 border-[#ccc3c3] bg-amber-100 dark:bg-[#141416] px-4 py-2 font-semibold text-neutral-900 dark:text-[#eee] cursor-pointer hover:bg-amber-200 dark:hover:bg-[#26262a] transition-colors duration-200"
-            >
-              Next flag
-              <ArrowRight size={18} aria-hidden="true" />
-            </button>
-          </div>
-        )}
+                "Correct!"
+              )
+            ) : (
+              <>
+                Not quite, it's{" "}
+                <span className="font-bold">{question.answer.name}</span>.
+              </>
+            )}
+          </p>
+          <button
+            ref={nextButtonRef}
+            type="button"
+            tabIndex={pickedCode ? 0 : -1}
+            onClick={goToNextQuestion}
+            className="shrink-0 ml-auto flex items-center gap-1.5 lg:gap-2 rounded-lg border-2 border-[#ccc3c3] bg-amber-100 dark:bg-[#141416] px-3 py-1.5 lg:px-4 lg:py-2 text-sm lg:text-base font-semibold text-neutral-900 dark:text-[#eee] cursor-pointer hover:bg-amber-200 dark:hover:bg-[#26262a] transition-colors duration-200"
+          >
+            Next flag
+            <ArrowRight size={18} aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </>
   );
 };
 
 const QuizStat = ({ icon, label, children }) => (
-  <div className="h-14 flex flex-col items-center justify-center rounded border-2 border-[#ccc3c3] bg-[#fffbeb] dark:bg-[#1d1d20] text-neutral-900 dark:text-[#f3f2ef] transition-all duration-600">
+  <div className="h-12 lg:h-14 flex flex-col items-center justify-center rounded border-2 border-[#ccc3c3] bg-[#fffbeb] dark:bg-[#1d1d20] text-neutral-900 dark:text-[#f3f2ef] transition-all duration-600">
     <span className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
       <span aria-hidden="true" className="flex">
         {icon}

@@ -60,6 +60,8 @@ const ExploreCountries = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, allCountries]);
 
+  const hasCountry = !!countryData?.code;
+
   const showRandomCountry = () => {
     const pool = filteredCountries.filter((c) => c.code !== countryData?.code);
     if (!pool.length) return;
@@ -70,13 +72,13 @@ const ExploreCountries = () => {
 
   return (
     <>
-      <h1 className="font-medium text-base lg:text-xl mb-4 lg:mb-8 text-neutral-900 dark:text-[#eee]">
+      <h1 className="hidden lg:block font-medium text-xl mb-8 text-neutral-900 dark:text-[#eee]">
         Welcome to the <span className="font-bold">Countries Explorer</span>!
         Choose a country to explore by tapping the 3D Earth or selecting
         from the dropdown list.
       </h1>
-      <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 w-full">
-        <FormControl className="w-full sm:w-[30%]">
+      <div className="flex justify-center gap-2 sm:gap-3 lg:gap-4 w-full shrink-0">
+        <FormControl className="w-[7.5rem] sm:w-40 shrink-0 lg:w-[30%]">
           <Select
             value={regionFilter}
             onChange={(e) => setRegionFilter(e.target.value)}
@@ -104,7 +106,7 @@ const ExploreCountries = () => {
             ))}
           </Select>
         </FormControl>
-        <div className="flex gap-3 w-full sm:w-[65%]">
+        <div className="flex gap-2 sm:gap-3 flex-1 min-w-0">
           <ExploreSearchbar
             countries={filteredCountries}
             isLoading={isCountryListLoading}
@@ -130,7 +132,24 @@ const ExploreCountries = () => {
           </button>
         </div>
       </div>
-      {isDataLoading ? <Loader /> : <DataCard countryData={countryData} />}
+      {hasCountry ? (
+        <div
+          className={`w-full transition-opacity duration-200 ${
+            isDataLoading ? "opacity-50 pointer-events-none" : ""
+          }`}
+          aria-busy={isDataLoading}
+        >
+          <DataCard countryData={countryData} />
+        </div>
+      ) : isDataLoading ? (
+        <div className="py-6 lg:py-0 w-full">
+          <Loader />
+        </div>
+      ) : (
+        <p className="lg:hidden mt-4 mb-1 text-sm text-center text-neutral-500 dark:text-neutral-400">
+          Tap a country on the globe, search for one, or roll the dice.
+        </p>
+      )}
     </>
   );
 };

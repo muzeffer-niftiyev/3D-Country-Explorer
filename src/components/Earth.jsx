@@ -64,19 +64,26 @@ const Earth = ({ earthMaterialRef, onFirstFrame }) => {
     return new THREE.Vector3(x, y, z);
   };
 
+  const flyTweenRef = useRef(null);
+
+  useEffect(() => () => flyTweenRef.current?.kill(), []);
+
   const flyTo = (lat, lng) => {
     const point = getVectorFromLatLng(lat, lng);
-    gsap.to(camera.position, {
+    flyTweenRef.current?.kill();
+    flyTweenRef.current = gsap.to(camera.position, {
       x: point.x,
       y: point.y,
       z: point.z,
       duration: 2,
       ease: "power2.out",
       onUpdate: () => {
+        const controls = controlsRef.current;
+        const earth = earthRef.current;
+        if (!controls || !earth) return;
         camera.lookAt(0, 0, 0);
-        controlsRef.current.update();
-        const distance = camera.position.distanceTo(earthRef.current.position);
-        controlsRef.current.maxDistance = distance * 2;
+        controls.update();
+        controls.maxDistance = camera.position.distanceTo(earth.position) * 2;
       },
     });
   };

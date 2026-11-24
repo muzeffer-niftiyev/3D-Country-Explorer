@@ -20,8 +20,8 @@ const Sidebar = () => {
   const isExploreActive = pathname.startsWith("/country");
 
   return (
-    <div className="bg-[#faf3d2] dark:bg-zinc-900 h-full overflow-y-auto rounded-md lg:rounded-none p-4 lg:p-6 flex items-center flex-col transition-all duration-600">
-      <nav className="mb-5 flex" aria-label="Sections">
+    <div className="bg-[#faf3d2] dark:bg-zinc-900 min-h-0 lg:h-full overflow-y-auto overscroll-contain rounded-t-2xl lg:rounded-none px-4 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] lg:p-6 flex items-center flex-col shadow-[0_-8px_24px_rgba(0,0,0,0.25)] lg:shadow-none transition-all duration-600">
+      <nav className="mb-3 lg:mb-5 flex shrink-0" aria-label="Sections">
         <NavLink
           to={exploreLink}
           className={() =>

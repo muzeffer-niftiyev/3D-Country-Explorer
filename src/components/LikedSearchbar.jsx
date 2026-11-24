@@ -73,7 +73,7 @@ const LikedSearchbar = ({
           sx={selectStyle(theme)}
         />
       )}
-      className="w-full sm:w-[70%]"
+      className="w-full lg:w-[70%]"
       componentsProps={{
         paper: {
           sx: {

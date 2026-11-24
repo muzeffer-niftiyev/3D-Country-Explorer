@@ -1,4 +1,5 @@
 import { Component } from "react";
+import GlobeNotice from "./GlobeNotice";
 
 class GlobeErrorBoundary extends Component {
   state = { hasError: false };
@@ -15,12 +16,10 @@ class GlobeErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="absolute inset-0 flex items-center justify-center p-6 text-center text-neutral-300">
-          <p className="max-w-sm">
-            The 3D globe couldn't be loaded. Try refreshing the page. You can
-            still explore countries from the list.
-          </p>
-        </div>
+        <GlobeNotice onRetry={this.props.onRetry}>
+          The 3D globe couldn't be loaded. Try again, or restart your browser
+          if it keeps happening. You can still explore countries from the list.
+        </GlobeNotice>
       );
     }
     return this.props.children;

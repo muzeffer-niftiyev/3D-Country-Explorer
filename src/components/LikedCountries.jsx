@@ -13,8 +13,8 @@ const LikedCountries = () => {
   return (
     <>
       {sortedLikedCountries.length ? (
-        <div className="h-full w-full my-4 dark:text-neutral-200 transition-colors duration-600">
-          <div className="w-full flex justify-center mb-6">
+        <div className="w-full lg:h-full lg:my-4 dark:text-neutral-200 transition-colors duration-600">
+          <div className="w-full flex justify-center lg:mb-6">
             <LikedSearchbar
               sortedLikedCountries={sortedLikedCountries}
               selectedCountry={selectedCountry}
@@ -26,14 +26,14 @@ const LikedCountries = () => {
             {selectedCountry ? (
               <DataCard countryData={selectedCountry} />
             ) : (
-              <p className="text-gray-500 dark:text-neutral-200 transition-colors duration-600 text-center mt-3">
+              <p className="text-sm lg:text-base text-gray-500 dark:text-neutral-200 transition-colors duration-600 text-center mt-4 lg:mt-3 mb-1">
                 Pick a country you’ve liked to explore its details.
               </p>
             )}
           </div>
         </div>
       ) : (
-        <p className="text-gray-500 font-semibold text-lg mt-5 dark:text-neutral-200 transition-colors duration-600">
+        <p className="text-gray-500 font-semibold text-base lg:text-lg mt-2 mb-1 lg:mt-5 text-center dark:text-neutral-200 transition-colors duration-600">
           You don't have any liked countries yet!
         </p>
       )}
