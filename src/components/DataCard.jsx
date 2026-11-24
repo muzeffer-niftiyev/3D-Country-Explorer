@@ -66,8 +66,7 @@ const DataCard = ({ countryData }) => {
             alt={`Flag of ${countryData.name}`}
             onLoad={() => setHasImgLoaded(true)}
             onError={() => setIsImgError(true)}
-            className="h-16 lg:h-[140px] lg:w-full"
-            imgClassName="max-w-[112px] lg:max-w-[min(260px,calc(100%_-_4.5rem))]"
+            className="h-16 lg:h-[140px] lg:w-full [--flag-h:4rem] lg:[--flag-h:140px] [--flag-max-w:112px] lg:[--flag-max-w:min(260px,calc(100%_-_4.5rem))]"
           />
         ) : (
           <div className="w-[112px] lg:w-[200px] text-sm lg:text-base text-gray-500 dark:text-neutral-200 flex items-center justify-center text-center px-2">

@@ -229,8 +229,7 @@ const FlagQuiz = () => {
           src={question.answer.flagUrl}
           code={question.answer.code}
           alt="Mystery flag"
-          className="h-20 lg:h-[140px] w-full"
-          imgClassName="max-w-[min(200px,100%)] lg:max-w-[min(260px,calc(100%_-_4.5rem))]"
+          className="h-20 lg:h-[140px] w-full [--flag-h:5rem] lg:[--flag-h:140px] [--flag-max-w:min(200px,100%)] lg:[--flag-max-w:min(260px,calc(100%_-_4.5rem))]"
         />
         <h3 className="hidden lg:block mt-3 uppercase text-xl font-bold text-center transition-all duration-600">
           Guess the country
